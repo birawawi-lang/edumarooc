@@ -1,0 +1,512 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EduMaroc — دروس منظمة</title><style>
+:root{--bg:#0b1530;--panel:#152342;--card:#203355;--text:#f5f8ff;--muted:#bdcce7;--line:#405678;--accent:#8db9ff;--good:#65d6a3}html.light{--bg:#f4faf7;--panel:white;--card:#eaf5ef;--text:#16362b;--muted:#47685a;--line:#c7dfd2;--accent:#16764c;--good:#16764c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.85 Tahoma,Arial,sans-serif}button,input,textarea{font:inherit}button{cursor:pointer;color:inherit}header{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}.wrap{width:min(1100px,94%);margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 0}.brand{font-size:1.5rem;font-weight:bold;color:var(--accent)}.row{display:flex;gap:9px;flex-wrap:wrap}.btn{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 16px}.btn:hover,.card:hover{border-color:var(--accent)}.active{outline:2px solid var(--accent)}.hero{text-align:center;padding:35px 0}.hero h1{margin:0}.hero p,.muted{color:var(--muted)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:17px;text-align:center;min-height:96px}.icon{display:block;font-size:2.1rem}.subjecticon{font-size:2rem}.hidden{display:none!important}.tabs{display:grid;gap:10px}.tab{width:100%;text-align:start;padding:15px;border:1px solid var(--line);border-radius:13px;background:var(--card);font-weight:bold}.content{padding:18px;border:1px solid var(--line);border-radius:14px;margin:12px 0;background:var(--card)}.lesson{line-height:2.2;white-space:pre-line}.lesson p{margin:0 0 15px}.question{padding:14px;border:1px solid var(--line);border-radius:12px;margin:14px 0}.answer{width:100%;min-height:90px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px;resize:vertical}input.answer{min-height:0}.feedback{color:var(--good);font-weight:bold}.lesson-switch{display:flex;justify-content:flex-end;position:sticky;top:74px;z-index:2;padding:8px 0}.lesson-switch .btn{background:var(--accent);color:#08162b;font-weight:800;box-shadow:0 4px 12px #0003}.language-box{padding:13px;border:1px solid var(--accent);border-radius:14px;margin:14px 0;background:var(--card)}.language-box p{margin:0 0 8px}.language-box .btn{margin:3px}.language-box .selected-lang{background:var(--accent);color:#07162b;font-weight:bold}.warning{border-right:4px solid #e4aa4d;padding:8px 12px;background:var(--card)}a{color:var(--accent)}footer{text-align:center;padding:24px;color:var(--muted)}@media(max-width:600px){.panel{padding:13px}.hero{padding:20px 0}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+details.topic-item{margin:12px 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 16px}details.topic-item summary{cursor:pointer;font-weight:750;padding:8px 2px}details.topic-item[open] summary{border-bottom:1px solid var(--line);margin-bottom:12px;padding-bottom:12px}details.topic-item .lesson{white-space:pre-wrap;line-height:2}</style></head><body><header><div class="wrap top"><div class="brand">📘 EduMaroc</div><div class="row"><button class="btn" id="langBtn">Français</button><button class="btn" id="themeBtn">☀️ / 🌙</button></div></div></header><main class="wrap"><section class="hero"><h1 id="welcome">تعلم بطريقة منظمة</h1><p id="tagline">كل مادة مستقلة: الدروس ← التمارين ← الفروض ← التصحيح</p></section><section class="panel"><h2 id="stageHeading">🎒 اختر المرحلة</h2><div class="grid" id="stages"></div></section><section class="panel"><h2 id="levelHeading">اختر المستوى</h2><div class="grid" id="levels"></div></section><section class="panel"><h2 id="subjectHeading">اختر المادة</h2><div class="grid" id="subjects"></div></section><section class="panel" id="workspace"><h2 id="workspaceHeading">محتوى المادة</h2><div class="row" id="semesters"></div><div id="learningLanguage"></div><p class="muted" id="breadcrumb"></p><div id="sections"></div></section><section class="panel"><h3 id="referenceHeading">مصادر للمراجعة</h3><p id="referenceNote">هذه شروحات تعليمية تدريبية وليست نسخة رسمية من المقرر. تحقق من الدروس والبرنامج مع أستاذك والكتاب المدرسي.</p><a href="https://www.alloschool.com/category/middle-school" target="_blank" rel="noopener noreferrer">📚 AlloSchool — فهارس دروس الإعدادي ↗</a><br><a href="https://www.alloschool.com/category/primary?hl=ar" target="_blank" rel="noopener noreferrer">🎒 AlloSchool — فهارس الابتدائي ↗</a><br><a href="https://www.unesco.org/" target="_blank" rel="noopener noreferrer">UNESCO / اليونسكو ↗</a><p class="muted">رابط اليونسكو عام، ولا يعني أن المنظمة راجعت هذه الدروس أو صادقت عليها.</p></section></main><footer>EduMaroc © <span id="year"></span></footer><script>
+'use strict';
+const LEVELS=[
+{ar:'الأولى ابتدائي',fr:'1re année primaire',en:'1st year primary',stage:0},{ar:'الثانية ابتدائي',fr:'2e année primaire',en:'2nd year primary',stage:0},{ar:'الثالثة ابتدائي',fr:'3e année primaire',en:'3rd year primary',stage:0},{ar:'الرابعة ابتدائي',fr:'4e année primaire',en:'4th year primary',stage:0},{ar:'الخامسة ابتدائي',fr:'5e année primaire',en:'5th year primary',stage:0},{ar:'السادسة ابتدائي',fr:'6e année primaire',en:'6th year primary',stage:0},
+{ar:'الأولى إعدادي',fr:'1re année collège',en:'1st year middle school',stage:1},{ar:'الثانية إعدادي',fr:'2e année collège',en:'2nd year middle school',stage:1},{ar:'الثالثة إعدادي',fr:'3e année collège',en:'3rd year middle school',stage:1},
+{ar:'الجذع المشترك',fr:'Tronc commun',en:'Common core',stage:2},{ar:'الأولى باكالوريا',fr:'1re année baccalauréat',en:'1st year baccalaureate',stage:2},{ar:'الثانية باكالوريا',fr:'2e année baccalauréat',en:'2nd year baccalaureate',stage:2}
+];
+const SUBJECTS=[
+{id:'ar',ar:'اللغة العربية',fr:'Arabe',en:'Arabic',stages:[0,1,2]}, {id:'fr',ar:'اللغة الفرنسية',fr:'Français',en:'French',stages:[0,1,2]}, {id:'math',ar:'الرياضيات',fr:'Mathématiques',en:'Mathematics',stages:[0,1,2]}, {id:'ie',ar:'التربية الإسلامية',fr:'Éducation islamique',en:'Islamic education',stages:[0,1,2]},
+{id:'svt',ar:'علوم الحياة والأرض',fr:'Sciences de la vie et de la Terre',en:'Life and Earth Sciences',stages:[1,2]}, {id:'pc',ar:'الفيزياء والكيمياء',fr:'Physique-chimie',en:'Physics and Chemistry',stages:[1,2]}, {id:'hist',ar:'التاريخ',fr:'Histoire',en:'History',stages:[1,2]}, {id:'geo',ar:'الجغرافيا',fr:'Géographie',en:'Geography',stages:[1,2]}, {id:'civ',ar:'التربية على المواطنة',fr:'Éducation civique',en:'Civic education',stages:[1]},
+{id:'de',ar:'اللغة الألمانية',fr:'Allemand',en:'German',levels:[9]}, {id:'es',ar:'اللغة الإسبانية',fr:'Espagnol',en:'Spanish',levels:[9]}, {id:'en',ar:'اللغة الإنجليزية',fr:'Anglais',en:'English',stages:[0,1,2]}, {id:'info',ar:'المعلوميات',fr:'Informatique',en:'Computer Science',stages:[1,2]}, {id:'philo',ar:'الفلسفة',fr:'Philosophie',en:'Philosophy',stages:[2]}, {id:'eco',ar:'الاقتصاد والتدبير',fr:'Économie et gestion',en:'Economics and Management',stages:[2]}, {id:'engsci',ar:'العلوم الهندسية',fr:'Sciences de l’ingénieur',en:'Engineering Sciences',stages:[2]}, {id:'arts',ar:'التربية الفنية',fr:'Arts plastiques',en:'Art Education',stages:[0,1]}, {id:'social',ar:'النشاط العلمي والاجتماعيات',fr:'Éveil scientifique et social',en:'Science and Social Studies',stages:[0]}
+];
+
+const ICONS={ar:'🖋️',fr:'🇫🇷',math:'📐',ie:'🕌',svt:'🌱',pc:'⚗️',hist:'🏛️',geo:'🌍',civ:'🤝',de:'🇩🇪',es:'🇪🇸',en:'🇬🇧',info:'💻',philo:'💭',eco:'📊',engsci:'⚙️',arts:'🎨',social:'🔬'};
+const CURRICULUM={
+ar:[['الجملة الاسمية والجملة الفعلية','القراءة والفهم والتعبير'],['المبتدأ والخبر','الفاعل والمفعول به']],
+fr:[['Se présenter et saluer','Lire et comprendre un texte'],['Le présent des verbes usuels','Rédiger un paragraphe']],
+math:[['الأعداد والعمليات الحسابية','حل المسائل الرياضية'],['الكسور والأعداد النسبية','الهندسة والقياس']],
+ie:[['القيم الإسلامية والأخلاق','الصدق والأمانة'],['العبادات والسلوك','التعاون واحترام الآخرين']],
+svt:[['الخلية والكائنات الحية','التغذية عند الإنسان'],['التنفس والتبادلات الغازية','التوازن البيئي']],
+pc:[['المادة وحالاتها','الكتلة والحجم'],['التيار الكهربائي','التحولات الفيزيائية والكيميائية']],
+hist:[['المصادر التاريخية والزمن','الحضارات القديمة'],['التاريخ المغربي وتحولاته','قراءة الوثيقة التاريخية']],
+geo:[['الخريطة ومكوناتها','التضاريس والمناخ'],['السكان والمجال','الموارد الطبيعية والبيئة']],
+civ:[['حقوق الطفل وواجباته','قواعد العيش المشترك'],['المواطنة والمسؤولية','المؤسسات والمشاركة']],
+de:[['Begrüßung und Vorstellung','Zahlen und Alter'],['Familie und Schule','Alltag und einfache Sätze']],
+es:[['Saludos y presentación','Los números y la edad'],['La familia y la escuela','La vida cotidiana']],
+en:[['Greetings and introductions','Present simple'],['Reading comprehension','Writing about daily life']],
+info:[['مكونات الحاسوب','الملفات والمجلدات'],['الإنترنت والبحث الآمن','مبادئ الخوارزميات']],
+philo:[['السؤال الفلسفي والتفكير النقدي','الوعي والإدراك'],['الحرية والمسؤولية','الحقيقة والحجاج']],
+eco:[['الحاجات والموارد الاقتصادية','العرض والطلب'],['المقاولة والتنظيم','التدبير والميزانية']],
+engsci:[['الأنظمة التقنية ووظائفها','الطاقة والتحويل'],['التحكم الآلي','الرسم التقني']],
+arts:[['الألوان الأساسية والمزج','الخطوط والأشكال'],['التكوين الفني','التعبير بالرسم']],
+social:[['الحواس الخمس','الوسط الطبيعي'],['الماء في حياتنا','النباتات والحيوانات']]
+};
+// عناوين موضوعات إضافية مستوحاة من فهارس AlloSchool؛ الشروح التالية أصلية وليست منسوخة.
+const EXTRA_TOPICS={
+fr:[
+ ['Le vocabulaire des salutations','Les pronoms personnels sujets','Les articles définis et indéfinis','Le genre et le nombre','Le groupe nominal','Les adjectifs possessifs','Les adjectifs démonstratifs','Les synonymes et les antonymes','Les homonymes','Le présent de l’indicatif','Le verbe être et avoir','Les types de phrases','Le complément d’objet direct (COD)','Le complément d’objet indirect (COI)','Le passé composé','Les indicateurs de temps'],
+ ['Le vocabulaire des sensations','Le champ lexical','Les adjectifs qualificatifs','Le complément du nom','La proposition relative','Les pronoms relatifs','L’imparfait','Le passé simple','Les temps du récit','Les compléments circonstanciels','Les verbes transitifs et intransitifs','Les connecteurs logiques','Le discours direct et indirect','La description d’un lieu','La description d’une personne','La ponctuation']
+],
+hist:[
+ ['مفهوم التاريخ ومصادره','الزمن التاريخي والخط الزمني','عصور ما قبل التاريخ','ظهور الزراعة والاستقرار','حضارة بلاد الرافدين','الحضارة المصرية القديمة','حضارات البحر الأبيض المتوسط','الحضارة الإغريقية','الحضارة الرومانية','شمال إفريقيا في العصور القديمة','المغرب القديم','قراءة الوثائق التاريخية'],
+ ['ظهور الإسلام وانتشاره','الحضارة الإسلامية','الدولة الإدريسية','الدولة المرابطية','الدولة الموحدية','الدولة المرينية','الدولة السعدية','الدولة العلوية','المغرب والتحولات الحديثة','الحماية بالمغرب','المقاومة المغربية','استقلال المغرب']
+],
+geo:[
+ ['الجغرافيا: موضوعها وأدواتها','مكونات الخريطة','الاتجاهات الأصلية والفرعية','مقياس الرسم','الإحداثيات الجغرافية','خطوط الطول ودوائر العرض','تضاريس المغرب','المناخ وعناصره','الحرارة والتساقطات','المياه السطحية والجوفية','المجالات الطبيعية','قراءة الخريطة الطبيعية'],
+ ['توزيع السكان','الكثافة السكانية','الهجرة وأسبابها','التمدن','المجال القروي','المجال الحضري','الموارد الطبيعية','الفلاحة بالمغرب','الصناعة بالمغرب','التجارة والخدمات','المشكلات البيئية','التنمية المستدامة']
+],
+civ:[
+ ['مفهوم المواطنة','الهوية والمواطنة','الحقوق والواجبات','حقوق الطفل','الحق في التعليم','المساواة وعدم التمييز','الكرامة الإنسانية','الحرية والمسؤولية','التسامح','التعاون والتضامن','قواعد الحياة المدرسية','الحوار وحل النزاعات'],
+ ['المشاركة المواطنة','العمل الجمعوي','المحافظة على الممتلكات العامة','المؤسسات المنتخبة','الجماعة الترابية','المرافق العمومية','حماية البيئة','الحق في الصحة','المسؤولية الرقمية','مكافحة العنف','ثقافة السلام','التطوع وخدمة المجتمع']
+]};
+const PRIMARY_REFERENCE='https://www.alloschool.com/category/primary?hl=ar';
+const ALLOSCHOOL_URLS={fr:'https://www.alloschool.com/course/francais-1ere-annee-college',hist:'https://www.alloschool.com/course/alijtmaaiat-althaltha-iadadi',geo:'https://www.alloschool.com/course/alijtmaaiat-althaltha-iadadi',civ:'https://www.alloschool.com/course/alijtmaaiat-althaltha-iadadi'};
+// فهرس مواضيع الثالثة إعدادي في الاجتماعيات مستند إلى فهرس AlloSchool.
+const THIRD_GRADE_SOCIAL={
+ hist:[['ازدهار الرأسمالية الأوربية خلال القرن 19م','الإمبريالية وليدة الرأسمالية','الضغط الاستعماري على المغرب','الحرب العالمية الأولى: الأسباب والنتائج','انهيار الإمبراطورية العثمانية والتدخل الاستعماري في المشرق العربي','أزمة 1929: الأسباب والمظاهر والنتائج'],['ظاهرة الأنظمة الديكتاتورية: النازية','الحرب العالمية الثانية: الأسباب والنتائج','القضية الفلسطينية والصراع العربي الإسرائيلي','المغرب: الكفاح من أجل الاستقلال وإتمام الوحدة الترابية','المراحل الكبرى لبناء الدولة المغربية الحديثة','ملف حول المقاومة المغربية']],
+ geo:[['المغرب العربي: عناصر الوحدة والتنوع','المغرب العربي بين التكامل والتحديات','اتحاد المغرب العربي خيار استراتيجي للتكتل الإقليمي','الاتحاد الأوربي: إمكانياته ومكانته الاقتصادية','الاتحاد الأوربي بين الاندماج والمنافسة','معيقات التكتلات الجهوية'],['الولايات المتحدة الأمريكية قوة عالمية','اليابان قوة تكنولوجية','روسيا ورهانات التحول','مصر نموذج تنموي عربي','نيجيريا بين الغنى الطبيعي والضعف التنموي','معالجة ظاهرة اقتصادية بالنهج الجغرافي']],
+ civ:[['المشاركة حق وواجب: ننتخب ممثلينا','كيف نعالج مشكلا اجتماعيا محليا','مسؤولية الدول والأفراد في حل المشاكل الاجتماعية','مؤسسة محمد الخامس للتضامن','تخليق الحياة العامة ومحاربة الرشوة','إلى أين ألجأ عند خرق حق من حقوقي؟'],['الحفاظ على التراث وتطويره','الحفاظ على الموارد الطبيعية','نحن والعالم نتقاسم الكرة الأرضية','المغرب وحوار الأديان','المغرب والسلم العالمي','برامج إعلامية للنهوض بقيم المواطنة']]
+};
+// فهارس تعليمية منتقاة بالاستناد إلى فهارس AlloSchool؛ لا تُنسب الشروح إلى المصدر.
+const CURATED_TOPICS={
+  '7:hist':[
+    ['حضارة بلاد الرافدين','حضارة مصر القديمة','الحضارة الإغريقية','المغرب القديم: الفينيقيون والقرطاجيون','المغرب القديم: الممالك الأمازيغية ومقاومة الرومان','الديانات في الحضارات القديمة'],
+    ['نشأة الدولة الإسلامية','الخلفاء الراشدون','الخلافة الإسلامية: الأمويون والعباسيون','الحضارة الإسلامية: الإنتاج الفكري','النظام الفيودالي في أوروبا','الحروب الصليبية: المواجهة واحتكاك الحضارات']
+  ],
+  '7:civ':[
+    ['الكرامة','الحرية','المساواة','العدل','التضامن'],
+    ['التسامح','الديمقراطية','السلم','القاعدة القانونية','حقوق الإنسان والمؤسسات المعنية بها']
+  ],
+  '8:pc':[
+    ['الهواء من حولنا','خصائص الهواء','الجزيئات والذرات','الاحتراقات','مفهوم التفاعل الكيميائي وقوانينه','المواد الطبيعية والمواد الصناعية','تلوث الهواء'],
+    ['منابع الضوء ومستقبلاته','الضوء والألوان: تبدد الضوء','انتشار الضوء','تطبيقات الانتشار المستقيمي للضوء','العدسات الرقيقة','الأجهزة البصرية','التيار الكهربائي المتناوب الجيبي','التركيب الكهربائي المنزلي']
+  ],
+  '6:math':[
+    ['الأعداد الصحيحة الطبيعية','التوازي والتعامد','العمليات على الأعداد الطبيعية','مضاعفات عدد وقواسمه','الأعداد الكسرية','المحيط والمساحة'],
+    ['الأعداد العشرية','العمليات على الأعداد العشرية','التناسبية','النسبة المئوية','الحجم والسعة','المجسمات الهندسية']
+  ]
+};
+// عناوين محددة راجعنا فهارسها في AlloSchool؛ لا ننسخ نصوص المصدر.
+Object.assign(CURATED_TOPICS,{
+ '1:fr':[['La lettre A','La lettre I','La lettre U','La lettre O','La lettre E','La lettre S'],['La lettre J','La lettre G','La lettre L','La lettre F','La lettre M','La lettre N']],
+ '6:ar':[['تصريف الفعل الصحيح','شروط قيام الحضارة','المبتدأ والخبر','النعت','كتابة فقرة وصفية','علامات الترقيم'],['تصريف الفعل الناقص','الأفعال الخمسة','همزة ابن','الميزان الصرفي','الأسماء الخمسة','كتابة حوار']],
+ '6:social':[['الهواء من حولنا','الاحتراقات','تغيرات المادة','الحساسية الشعورية','التحركية الإرادية واللاإرادية','وقاية الجهاز العصبي'],['التغذية والصحة','مكونات الوسط البيئي','العلاقات المتبادلة بين مكونات الوسط البيئي','اختلال التوازن البيئي','المحافظة على التوازن البيئي']],
+ '7:ie':[['الشطر الأول من سورة ق','العقيدة الصحيحة والعقائد الفاسدة','بعثة الرسول ودعوته السرية والجهرية','العبادة غاية الخلق وأركان الإسلام','حق الله: التوحيد والإخلاص','الإتقان عبادة وعملا'],['الشطر الثاني من سورة ق','الإيمان بالملائكة','الهجرة إلى الحبشة','الصلاة: أحكامها ومقاصدها','حق النفس: الحفظ والرعاية','التعاون والتضامن']],
+ '7:fr':[['Le verbe','Le passé composé','L’imparfait et le passé simple','Les verbes transitifs et intransitifs','Le COD et le COI','Les verbes irréguliers'],['Le groupe nominal','Les articles','Les adjectifs possessifs et démonstratifs','L’adjectif qualificatif','Le complément du nom','Les homonymes et les antonymes']],
+ '7:en':[['School things','This, that, these and those','The English alphabet','Introducing yourself','Classroom vocabulary','Capital letters'],['Family members','Have got / has got','Daily routines','Present simple','Days and months','Describing a person']]
+});
+// فهارس إضافية خاصة بالإعدادي، موزعة على الدورتين.
+// العناوين التعليمية مرجعية، والشروح الموجودة في المنصة من إعداد EduMaroc.
+Object.assign(CURATED_TOPICS,{
+ '7:ar':[
+  ['الميزان الصرفي والمجرد والمزيد','تصريف الفعل الصحيح','تصريف الفعل المعتل','اللازم والمتعدي','اسم الفاعل','اسم المفعول','المصادر','الجملة الاسمية والجملة الفعلية'],
+  ['النكرة والمعرفة','العلم','الضمير البارز والضمير المستتر','الضمير المتصل','الضمير المنفصل','أسماء الإشارة','الاسم الموصول','أحوال المبتدأ والخبر']
+ ],
+ '8:hist':[
+  ['دراسة الدولة الإدريسية من خلال وثائق تاريخية','ازدهار الدولة المغربية: المرابطون والموحدون','تراجع الجهاد وبداية حرب الاسترداد','الغزو الإيبيري ورد فعل المغاربة','الدولة العلوية وإعادة توحيد البلاد','المغرب بين الانفتاح والانغلاق'],
+  ['الإمبراطورية العثمانية في أقصى امتدادها','النهضة الأوروبية','الاكتشافات الجغرافية','الثورة الفلاحية والثورة الصناعية في أوروبا','الثورة الفرنسية وليدة فكر الأنوار','نشأة الولايات المتحدة الأمريكية']
+ ],
+ '8:geo':[
+  ['المغرب: موقع استراتيجي','المغرب: تضاريس وموارد سطحية متنوعة','المغرب: موارد باطنية مختلفة','التدرب على رسم خريطة تضاريس المغرب','المغرب: مناخ متنوع الخصائص','التدرب على قراءة المبيانات المناخية'],
+  ['المغرب: السكان وتوزيعهم','المغرب: الفلاحة','المغرب: الصناعة','المغرب: التجارة والخدمات','المغرب: النقل والمواصلات','التنمية المستدامة وحماية الموارد']
+ ],
+ '8:civ':[
+  ['مقومات الدولة المغربية','الدستور المغربي القانون الأسمى للأمة','الملك','البرلمان','الحكومة','القضاء وحقوق الأحداث','الحقوق المدنية والسياسية'],
+  ['الحريات العامة بالمغرب','الأحزاب السياسية ودورها في تأطير المواطنين','النقابات والمنظمات المهنية','الصحافة','الحقوق الاقتصادية والاجتماعية والثقافية','الديمقراطية المحلية','الجمعيات وممارسة المواطنة']
+ ]
+});
+const VERIFIED_SOURCE_LINKS={
+ '7:ar':'https://www.alloschool.com/course/allgha-alarbia-alaola-iadadi',
+ '8:hist':'https://www.alloschool.com/course/alijtmaaiat-althania-iadadi',
+ '8:geo':'https://www.alloschool.com/course/alijtmaaiat-althania-iadadi',
+ '8:civ':'https://www.alloschool.com/course/alijtmaaiat-althania-iadadi',
+ '1:fr':'https://www.alloschool.com/course/francais-1ere-annee-primaire',
+ '6:ar':'https://www.alloschool.com/course/allgha-alarbia-alsads-abtdaii',
+ '6:social':'https://www.alloschool.com/course/alnshat-alalmi-alsads-abtdaii',
+ '7:ie':'https://www.alloschool.com/course/altrbia-alislamia-alaola-iadadi',
+ '7:fr':'https://www.alloschool.com/course/francais-1ere-annee-college',
+ '7:en':'https://www.alloschool.com/course/anglais-1ere-annee-college',
+ '7:math':'https://www.alloschool.com/course/alriadhiat-alaola-iadadi'
+};
+const CURATED_EXPLANATIONS={
+ 'حضارة بلاد الرافدين':['نشأت حضارات بلاد الرافدين بين نهري دجلة والفرات في منطقة العراق الحالي.','ساعدت الزراعة والري على نشوء المدن وتنظيم الحياة الاقتصادية.','عرف السومريون الكتابة المسمارية، واستعملت لتدوين المعاملات والمعارف.','ظهرت قوانين مكتوبة من أشهرها شريعة حمورابي في بابل.'],
+ 'حضارة مصر القديمة':['قامت الحضارة المصرية على ضفاف نهر النيل، حيث ساعد الفيضان على خصوبة التربة.','كان الفرعون على رأس الدولة، وارتبط الحكم بالدين والإدارة.','استعمل المصريون القدماء الكتابة الهيروغليفية في النقوش والوثائق.','تُظهر الأهرامات والمعابد تقدم تقنيات البناء والتنظيم.'],
+ 'الكرامة':['الكرامة قيمة إنسانية تعني احترام الإنسان لذاته واحترام الآخرين له.','لا ترتبط الكرامة بالمال أو الأصل أو اللغة أو الوضع الاجتماعي.','يظهر احترام الكرامة في عدم الإهانة والتنمر والتمييز.','يمكن حماية الكرامة داخل المدرسة بالإنصات والحوار والاحتكام إلى القواعد.'],
+ 'الحرية':['الحرية قدرة الإنسان على الاختيار والتعبير والتصرف في حدود احترام حقوق الآخرين والقانون.','لا تعني الحرية الاعتداء على الأشخاص أو ممتلكاتهم.','من صورها حرية الرأي والتعلم والتنقل وفق الضوابط القانونية.','ترتبط الحرية بالمسؤولية وتحمل نتائج الاختيارات.'],
+ 'الهواء من حولنا':['الهواء خليط من الغازات يحيط بالأرض ويكوّن الغلاف الجوي.','يشكّل الآزوت نحو 78% والأكسجين نحو 21% من الهواء الجاف قرب سطح الأرض.','الهواء يشغل حيزاً وله كتلة ويمكن ضغطه.','نحتاج الأكسجين في التنفس وتحتاجه أغلب عمليات الاحتراق.'],
+ 'خصائص الهواء':['الهواء مادة غازية ليس لها شكل ثابت وتأخذ شكل الوعاء الذي توجد فيه.','يمكن ضغط الهواء وتقليل حجمه تحت تأثير الضغط.','للغازات كتلة ويمكن الاستدلال عليها بتجارب بسيطة وآمنة.','تؤثر درجة الحرارة في تمدد الهواء وانكماشه.'],
+ 'الجزيئات والذرات':['الذرة وحدة بنائية للمادة تتكون من نواة وإلكترونات.','الجزيء مجموعة ذرات مرتبطة كيميائياً، مثل جزيء الماء H₂O.','يمكن تمثيل الجزيئات بنماذج كروية لتسهيل الفهم.','تختلف المادة بحسب أنواع الذرات وترتيبها وروابطها.'],
+ 'الاحتراقات':['الاحتراق تحول كيميائي يحدث عندما تتفاعل مادة قابلة للاحتراق مع مؤكسد، غالباً الأكسجين.','من شروط الاحتراق وجود الوقود والأكسجين ومصدر مناسب للطاقة.','قد ينتج عن الاحتراق الكامل لوقود كربوني ثاني أكسيد الكربون وبخار الماء.','الاحتراق غير الكامل قد ينتج أول أكسيد الكربون السام؛ لا تُجرِ التجارب دون إشراف.'],
+ 'الأعداد الصحيحة الطبيعية':['الأعداد الطبيعية هي الأعداد المستعملة في العد مثل 0 و1 و2 و3.','نستعمل القيمة المكانية لفهم الآحاد والعشرات والمئات والآلاف.','للمقارنة بين عددين نبدأ بعدد الأرقام ثم نقارن الأرقام من اليسار.','مثال: 5304 أكبر من 5298 لأن 3 مئات أكبر من 2 مئات بعد تساوي الآلاف.']
+};
+const CURATED_SOURCE={
+ '7:hist':'https://www.alloschool.com/course/alijtmaaiat-alaola-iadadi',
+ '7:civ':'https://www.alloschool.com/course/alijtmaaiat-alaola-iadadi',
+ '8:pc':'https://www.alloschool.com/course/alfiziaa-oalkimiaa-althania-iadadi',
+ '6:math':'https://www.alloschool.com/course/alriadhiat-alsads-ibtdaii'
+};
+function curatedLesson(topic){
+ const facts=CURATED_EXPLANATIONS[topic];if(!facts)return null;
+ const parts=[`عنوان الدرس: ${topic}`,'أهداف التعلم: فهم المفاهيم الأساسية، التمييز بين الأفكار الرئيسية والتفاصيل، وتوظيف المعلومات في وضعيات جديدة.','تمهيد: اقرأ العنوان، وتوقع ما ستتعلمه، ثم دوّن سؤالين تريد معرفة جوابهما.'];
+ facts.forEach((fact,i)=>{parts.push(`${i+1}. الفكرة الأساسية: ${fact}`);parts.push(`نشاط الفهم ${i+1}: اشرح الفكرة السابقة بأسلوبك، ثم اذكر مثالاً أو دليلاً مناسباً.`)});
+ parts.push('طريقة المراجعة: أنجز خريطة ذهنية تضم المصطلحات الرئيسية وعلاقاتها.');parts.push('تطبيق: اكتب فقرة مترابطة تلخص أهم الأفكار دون نسخ نص الدرس.');parts.push('تقويم ذاتي: ما المفهوم الجديد؟ ما المثال الذي يوضحه؟ وما السؤال الذي ما زلت تحتاج إلى طرحه؟');
+ return {title:topic,body:parts.join('\n\n')};
+}
+
+// فهارس تعليمية موسعة للابتدائي؛ توزيعها مقترح ويحتاج مطابقة مع الكتاب المدرسي.
+const PRIMARY_LESSON_INDEX={"ar": [["الحروف والحركات", "المقاطع والكلمات", "المدود", "التنوين", "اللام الشمسية والقمرية", "الجملة المفيدة", "الاسم والفعل والحرف", "التاء المربوطة والمفتوحة"], ["أسماء الإشارة", "الضمائر", "المفرد والمثنى والجمع", "الجملة الاسمية", "الجملة الفعلية", "الفاعل", "المبتدأ والخبر", "علامات الترقيم"]], "fr": [["Les salutations", "L’alphabet et les sons", "Les voyelles", "Le vocabulaire de la classe", "Les articles un et une", "Les pronoms personnels", "Le verbe être", "La phrase simple"], ["Le verbe avoir", "Le présent", "Le féminin et le masculin", "Le singulier et le pluriel", "Les adjectifs qualificatifs", "La négation", "Les prépositions de lieu", "Le vocabulaire des animaux"]], "en": [["Greetings and introductions", "The English alphabet", "Numbers and counting", "Colours", "School objects", "My family", "Personal pronouns", "Verb to be"], ["Days and months", "Animals and nature", "Food and drinks", "Verb to have", "Simple present", "Questions with what and where", "Prepositions of place", "Daily routines"]], "math": [["قراءة الأعداد وكتابتها", "مقارنة الأعداد وترتيبها", "الجمع", "الطرح", "الضرب", "القسمة", "حل المسائل", "الأشكال الهندسية"], ["الكسور", "الأعداد العشرية", "القياس والأطوال", "الكتل والسعات", "الزمن والساعة", "المحيط", "المساحة", "تنظيم البيانات"]], "ie": [["القرآن الكريم وآداب التلاوة", "الإيمان بالله تعالى", "أركان الإسلام", "الصدق", "الأمانة", "بر الوالدين", "النظافة والطهارة", "الوضوء"], ["الصلاة", "آداب المسجد", "الصيام", "التعاون", "التسامح", "الرحمة بالحيوان", "الاقتداء بالرسول ﷺ", "حقوق الجار"]], "social": [["الحواس الخمس", "أجزاء الجسم", "النبات وأجزاؤه", "حاجات الكائنات الحية", "الماء في الطبيعة", "الهواء من حولنا", "المواد وخصائصها", "الضوء والظل"], ["حالات الماء", "التبخر والتكاثف", "الغذاء الصحي", "التنفس", "الكهرباء والسلامة", "المغناطيس", "السلسلة الغذائية", "حماية البيئة"]], "arts": [["الألوان الأساسية", "مزج الألوان", "الخطوط والأشكال", "الرسم بالملاحظة", "القص واللصق", "التوازن في اللوحة"], ["الألوان الدافئة والباردة", "الملمس", "الزخرفة", "الطباعة اليدوية", "المنظور البسيط", "مشروع فني"]], "hist": [["الأسرة والمجتمع عبر الزمن", "الوثائق التاريخية", "تاريخ مدينتي", "شخصيات من تاريخ المغرب", "المغرب القديم", "معالم التراث المغربي"], ["الدولة الإدريسية", "المرابطون والموحدون", "الدولة السعدية", "الدولة العلوية", "المقاومة المغربية", "الاستقلال"]], "geo": [["الاتجاهات", "قراءة الخريطة", "التضاريس", "المناخ", "الماء في المغرب", "المجال القروي والحضري"], ["السكان", "الموارد الطبيعية", "الفلاحة", "الصناعة", "البيئة", "التنمية المستدامة"]]};
+
+function primaryTopics(){
+ const groups=PRIMARY_LESSON_INDEX[subject];
+ if(!groups)return null;
+ const titles=groups[semester-1];
+ return titles.map((name,i)=>{
+   if(level===1)return name;
+   if(level===2)return name+' — المستوى الثاني';
+   if(level===3)return name+' — المستوى الثالث';
+   if(level===4)return name+' — المستوى الرابع';
+   if(level===5)return name+' — المستوى الخامس';
+   return name+' — المستوى السادس';
+ });
+}
+function primaryLesson(topic,j){
+ const base=topic.split(' — المستوى')[0];
+ const foreign=subject==='fr'||subject==='en';
+ const examples={
+ 'الجمع':['3 + 4 = 7','12 + 8 = 20','35 + 14 = 49'],
+ 'الطرح':['9 - 4 = 5','20 - 7 = 13','53 - 21 = 32'],
+ 'الضرب':['3 × 4 = 12','6 × 5 = 30','7 × 8 = 56'],
+ 'القسمة':['12 ÷ 3 = 4','20 ÷ 5 = 4','36 ÷ 6 = 6'],
+ 'الكسور':['1/2 نصف','1/4 ربع','3/4 ثلاثة أرباع'],
+ 'الحروف والحركات':['بَ: فتحة','بُ: ضمة','بِ: كسرة'],
+ 'الوضوء':['النية','غسل الوجه واليدين','مسح الرأس وغسل الرجلين'],
+ 'الحواس الخمس':['البصر: العين','السمع: الأذن','الشم: الأنف'],
+ 'حالات الماء':['الثلج: صلب','الماء: سائل','بخار الماء: غاز'],
+ 'Les salutations':['Bonjour : صباح الخير','Bonsoir : مساء الخير','Au revoir : إلى اللقاء'],
+ 'Greetings and introductions':['Hello: مرحباً','My name is...: اسمي','Goodbye: إلى اللقاء'],
+ 'Numbers and counting':['one = 1','two = 2','three = 3'],
+ 'Colours':['red = أحمر','blue = أزرق','green = أخضر']
+ };
+ const samples=examples[base]||[base+' — مفهوم الدرس الأساسي',base+' — مثال من المحيط المدرسي',base+' — تطبيق على موقف جديد'];
+ const intro=foreign?(subject==='fr'?'Objectif : apprendre et utiliser « '+base+' » dans des phrases simples.':'Goal: understand and use “'+base+'” in simple sentences.'):'نتعلم في هذا الدرس «'+base+'» خطوة بخطوة، ونستعمله في أمثلة وتطبيقات مناسبة للمستوى '+level+'.';
+ const rows=[intro,'1. عنوان التعلم: '+base,'2. تمهيد: تذكر ما تعرفه عن هذا الموضوع قبل البدء.','3. ملاحظة: اقرأ الأمثلة وحاول تحديد ما يجمع بينها.'];
+ samples.forEach((x,i)=>rows.push((i+4)+'. مثال '+(i+1)+': '+x));
+ rows.push('7. الفكرة الأساسية: افهم القاعدة أو المفهوم قبل حفظ الكلمات.');
+ rows.push('8. خطوة عملية: اقرأ المثال الأول واشرحه بأسلوبك.');
+ rows.push('9. تطبيق أول: أنشئ مثالاً جديداً يشبه المثال الثاني.');
+ rows.push('10. تطبيق ثانٍ: قارن بين المثالين الأول والثالث.');
+ rows.push('11. خطأ شائع: لا تنقل الإجابة قبل فهم المطلوب.');
+ rows.push('12. تدريب شفهي: اشرح الدرس لزميلك في دقيقة واحدة.');
+ rows.push('13. تدريب كتابي: اكتب ثلاث جمل أو عمليات متعلقة بالدرس.');
+ rows.push('14. تحقق من فهمك: ما معنى '+base+'؟');
+ rows.push('15. سؤال التفكير: أين تستعمل ما تعلمته في حياتك اليومية؟');
+ rows.push('16. نشاط منزلي: ابحث عن مثال من بيتك أو مدرستك.');
+ rows.push('17. مراجعة: أعد حل التطبيق دون النظر إلى الحل.');
+ rows.push('18. خلاصة: احتفظ بالفكرة الرئيسية والأمثلة الثلاثة في دفترك.');
+ return {title:topic,body:rows.join('\n\n')};
+}
+
+function currentTopics(){
+ if(level>=1&&level<=6&&PRIMARY_LESSON_INDEX[subject])return primaryTopics();
+ const curated=CURATED_TOPICS[`${level}:${subject}`];if(curated)return curated[semester-1];
+ if(level===9&&THIRD_GRADE_SOCIAL[subject])return THIRD_GRADE_SOCIAL[subject][semester-1];
+ if(level>=7&&level<=8&&EXTRA_TOPICS[subject])return EXTRA_TOPICS[subject][semester-1];
+ return CURRICULUM[subject][semester-1];
+}
+function expandedLesson(topic,j){
+ const facts=INFO[subject]||[];
+ const foreign=['fr','en','de','es'].includes(subject);
+ const intro=subject==='fr'?`Objectif : apprendre « ${topic} », reconnaître cette notion et l'utiliser dans une phrase correcte.`:`موضوع الدرس: ${topic}\nالأهداف: تعريف المفهوم وفهمه، ثم تطبيقه على أمثلة وأسئلة.`;
+ const rows=[intro];
+ const unique=subject==='fr'?[
+ `Définition : « ${topic} » est une notion à comprendre dans le contexte de la phrase. On commence par repérer les mots et leur fonction.`,
+ `Méthode : lis l'exemple, observe les mots importants, puis formule la règle avec tes propres mots.`,
+ `Application : rédige deux phrases différentes en utilisant la notion étudiée.`,
+ `Attention : vérifie l'accord, le temps du verbe, la ponctuation et le sens.`,
+ `Exercice guidé : souligne les mots utiles et explique pourquoi tu les as choisis.`,
+ `Révision : compare tes réponses avec la règle et corrige chaque erreur.`
+ ]:[
+ `تعريف: يقصد بموضوع «${topic}» مجموعة من المفاهيم والوقائع التي نفهمها عبر الملاحظة والتفسير.`,
+ `خطوة أولى: حدد الكلمات الأساسية في العنوان واشرح معنى كل كلمة بكلامك.`,
+ `خطوة ثانية: اقرأ المعطيات، ثم ميز بين المعلومة المؤكدة والرأي الشخصي.`,
+ `خطوة ثالثة: اربط الدرس بسياقه الزمني أو المكاني أو الاجتماعي حسب طبيعة المادة.`,
+ `مثال تطبيقي: اكتب مثالاً واقعياً يرتبط بموضوع «${topic}»، وفسر العلاقة بينهما.`,
+ `تحليل: ابحث عن الأسباب والنتائج أو الحقوق والواجبات أو العناصر والخصائص حسب الموضوع.`,
+ `استنتاج: اكتب فقرة من ثلاث جمل تلخص ما فهمته دون نسخ النص.`,
+ `تثبيت التعلم: أنشئ سؤالين عن الدرس، ثم أجب عنهما مع تعليل مختصر.`
+ ];
+ for(let i=0;i<unique.length;i++)rows.push(`${i+1}. ${unique[i]}`);
+ facts.forEach((f,i)=>rows.push(`${unique.length+i+1}. ${f}`));
+ rows.push(foreign?'Activité finale : écris cinq phrases originales et relis-les attentivement.':'نشاط ختامي: أنجز خريطة ذهنية، واكتب خمسة مصطلحات مع تعريفاتها، ثم ناقش فكرة من الدرس مع زميلك.');
+ return {title:topic,body:rows.join('\n\n')};
+}
+const INFO={
+ar:['الجملة الاسمية تبدأ باسم، وتتكون غالبا من مبتدأ وخبر. مثال: العلمُ نافعٌ.','الجملة الفعلية تبدأ بفعل، مثل: قرأَ التلميذُ الدرسَ.','نحدد نوع الجملة بالنظر إلى الكلمة الأولى ووظيفتها.','المبتدأ اسم مرفوع نخبر عنه، والخبر يتمم المعنى.','الفعل يدل على حدث مرتبط بزمن: ماض أو مضارع أو أمر.','الفاعل هو من قام بالفعل، ويأتي مرفوعا في الجملة الفعلية.','المفعول به يقع عليه فعل الفاعل، ويكون منصوبا.','عند القراءة نحدد الفكرة العامة ثم الأفكار الأساسية.'],
+fr:['Pour se présenter, on dit : Bonjour, je m’appelle Sara.','Pour demander le nom : Comment tu t’appelles ?','Pour répondre : Je m’appelle Youssef.','Le verbe être : je suis, tu es, il est, nous sommes.','Le verbe avoir : j’ai, tu as, il a, nous avons.','Une phrase commence par une majuscule et se termine par un point.','Pour comprendre un texte, repère les personnages, le lieu et le moment.','Pour rédiger, organise tes idées en introduction, développement et conclusion.'],
+math:['نبدأ بقراءة المعطيات وتحديد المطلوب قبل الحساب.','الجمع يجمع كميات: 7 + 5 = 12.','الطرح يجد الفرق: 15 - 6 = 9.','الضرب جمع متكرر: 4 × 3 = 12.','القسمة توزيع متساو: 12 ÷ 3 = 4.','في الكسور، البسط فوق خط الكسر والمقام تحته.','الكسر 1/2 يعني جزءا واحدا من جزأين متساويين.','مساحة المستطيل تساوي الطول مضروبا في العرض.'],
+ie:['الصدق هو قول الحقيقة والابتعاد عن الكذب.','الأمانة هي حفظ حقوق الآخرين وأشيائهم.','احترام الوالدين والمعلمين من السلوك الحسن.','التعاون يساعد الجماعة على إنجاز الأعمال.','النظافة سلوك يومي يحافظ على الصحة والبيئة.','نتعلم قيمة الاعتدال في الكلام والعمل.','العبادة ترتبط بالنية الحسنة والسلوك المسؤول.','نطبق القيم في المدرسة والبيت والشارع.'],
+svt:['الكائنات الحية تحتاج إلى الماء والغذاء والطاقة.','الخلية وحدة بنائية أساسية للكائنات الحية.','تتكون بعض الكائنات من خلية واحدة وأخرى من خلايا كثيرة.','التغذية تمد الجسم بمواد يحتاجها للنمو والنشاط.','التنفس يساعد الجسم على الاستفادة من الأكسجين.','النبات الأخضر يصنع مادته العضوية في وجود الضوء.','النظام البيئي يضم كائنات حية وعوامل غير حية.','اختلال التوازن البيئي قد يضر بالتنوع الحيوي.'],
+pc:['توجد المادة في حالات صلبة وسائلة وغازية.','الانصهار انتقال من الحالة الصلبة إلى السائلة.','التبخر انتقال من الحالة السائلة إلى الغازية.','الكتلة تقاس عادة بالغرام أو الكيلوغرام.','الحجم يقاس بوحدات مثل اللتر أو السنتيمتر المكعب.','الدائرة الكهربائية المغلقة تسمح بمرور التيار.','التحول الفيزيائي لا ينتج عادة مادة جديدة.','التحول الكيميائي ينتج مواد تختلف عن المواد الأصلية.'],
+hist:['التاريخ يدرس أحداث الماضي وتطور المجتمعات.','يستعمل المؤرخ وثائق مكتوبة وآثارا وشهادات.','نميز بين المصدر الأصلي والشرح الذي يفسره.','نرتب الأحداث زمنيا باستعمال السنوات والقرون.','القرن الواحد يساوي مئة سنة.','تساعد الخرائط التاريخية على فهم المجالات القديمة.','نقارن بين أسباب الأحداث ونتائجها.','نتحقق من مصدر الوثيقة وتاريخها قبل الاستنتاج.'],
+geo:['الجغرافيا تدرس المجال الطبيعي والبشري.','الخريطة تمثيل مبسط لجزء من سطح الأرض.','يساعد العنوان والمفتاح والمقياس على قراءة الخريطة.','تضم التضاريس الجبال والسهول والهضاب.','يتأثر المناخ بالحرارة والتساقطات والرياح.','توزيع السكان يختلف من منطقة إلى أخرى.','الموارد الطبيعية تشمل الماء والتربة والمعادن.','حماية البيئة تتطلب ترشيد استهلاك الموارد.'],
+civ:['المواطنة تجمع بين الحقوق والواجبات.','لكل طفل حق في التعلم والحماية والاحترام.','يقابل حق التعلم واجب احترام قواعد المدرسة.','الحوار وسيلة سلمية لحل الخلافات.','التعاون يجعل العمل الجماعي أكثر فاعلية.','المسؤولية تعني تحمل نتائج أفعالنا.','نحافظ على الممتلكات العامة لأنها للجميع.','نحترم الاختلاف ونرفض التمييز والعنف.'],
+de:['Guten Tag bedeutet «طاب يومك».','Hallo bedeutet «مرحبا» ويستعمل في التحية غير الرسمية.','Ich heiße Lina bedeutet «اسمي لينا».','Wie heißt du? bedeutet «ما اسمك؟».','Ich bin dreizehn Jahre alt bedeutet «عمري ثلاث عشرة سنة».','Eins, zwei, drei, vier, fünf : الأعداد من واحد إلى خمسة.','Meine Familie bedeutet «عائلتي».','Ich gehe zur Schule bedeutet «أذهب إلى المدرسة».'],
+es:['Hola significa «مرحبا».','Buenos días significa «صباح الخير».','Me llamo Sara significa «اسمي سارة».','¿Cómo te llamas? significa «ما اسمك؟».','Tengo catorce años significa «عمري أربع عشرة سنة».','Uno, dos, tres, cuatro, cinco : الأعداد من واحد إلى خمسة.','Mi familia significa «عائلتي».','Voy a la escuela significa «أذهب إلى المدرسة».'],
+en:['Hello is a common greeting.','My name is Adam introduces a person.','How are you? asks about someone’s well-being.','I am fine, thank you is a polite reply.','The present simple describes routines.','I study every day is an example of the present simple.','Read a paragraph and identify its main idea.','Write clear sentences with a subject and a verb.'],
+info:['الحاسوب جهاز يعالج البيانات وفق تعليمات.','لوحة المفاتيح وسيلة لإدخال النصوص.','الشاشة تعرض النتائج والمعلومات.','الملف يحتوي بيانات مثل النصوص والصور.','المجلد ينظم الملفات في مكان واحد.','كلمة المرور القوية تساعد على حماية الحساب.','نتحقق من مصداقية المصادر عند البحث على الإنترنت.','الخوارزمية سلسلة خطوات واضحة لحل مشكلة.'],
+philo:['الفلسفة تبدأ بطرح الأسئلة بدل قبول الأفكار دون فحص.','المفهوم أداة تساعد على تنظيم التفكير.','الحجة سبب نقدمه للدفاع عن موقف.','الرأي موقف قد يحتاج إلى دليل.','التفكير النقدي يميز بين الادعاء والبرهان.','الحرية ترتبط بالاختيار وبالمسؤولية.','الحوار الفلسفي يتطلب احترام الرأي المخالف.','نبني مقالا فلسفيا بمقدمة وتحليل ومناقشة وخاتمة.'],
+eco:['الحاجات رغبات يسعى الإنسان إلى تلبيتها.','الموارد الاقتصادية محدودة مقارنة بتعدد الحاجات.','الإنتاج يهدف إلى توفير السلع والخدمات.','الطلب يعبر عن الكميات التي يرغب المستهلك في شرائها.','العرض يعبر عن الكميات التي يقدمها المنتجون.','الميزانية تقارن المداخيل بالمصاريف.','المقاولة تنظم الموارد البشرية والمادية.','التدبير الجيد يتطلب تخطيطا ومتابعة وتقييما.'],
+engsci:['النظام التقني يتكون من عناصر تؤدي وظائف مترابطة.','نحدد حاجة المستخدم قبل تصميم الحل.','المدخلات معلومات أو طاقة يستقبلها النظام.','المخرجات نتائج يقدمها النظام.','السلسلة الطاقية توضح انتقال الطاقة وتحويلها.','الحساس يقيس كمية أو يكتشف تغيرا.','التحكم الآلي ينفذ أوامر وفق شروط.','الرسم التقني يساعد على وصف الأبعاد والأجزاء.'],
+arts:['الألوان الأساسية في الرسم التقليدي هي الأحمر والأصفر والأزرق.','مزج الألوان يعطي درجات جديدة.','الخط قد يكون مستقيما أو منحنيا.','الشكل الهندسي يختلف عن الشكل الحر.','التوازن البصري ينظم عناصر اللوحة.','التباين يبرز الاختلاف بين الألوان والأحجام.','نلاحظ العمل الفني قبل تفسيره.','نستعمل الأدوات الفنية بعناية ونحافظ عليها.'],
+social:['نستعمل الحواس الخمس للتعرف على محيطنا.','العين عضو الإبصار والأذن عضو السمع.','الماء ضروري لحياة الإنسان والنبات والحيوان.','يحتاج النبات إلى الماء والضوء والهواء.','نميز بين الكائنات الحية والأشياء غير الحية.','تتغير أحوال الطقس خلال السنة.','نحافظ على نظافة الوسط الذي نعيش فيه.','نلاحظ الظواهر ثم نصف ما شاهدناه.']
+};
+const $=id=>document.getElementById(id);let lang=['ar','fr','en'].includes(localStorage.getItem('edu-lang'))?localStorage.getItem('edu-lang'):'ar',stage=0,level=null,subject=null,semester=1,opened=null,learningLang='original';
+const EN_UI={welcome:'Learn with confidence',tagline:'Each subject stays separate: lessons → exercises → practice exams → answer keys',stage:'🎒 Choose a school stage',level:'Choose your grade',subject:'Choose a subject',workspace:'Subject resources',sem:['First semester','Second semester'],sections:['📖 Lessons','✍️ Interactive exercises','📝 Practice exams','✅ Exercise answers','📋 Practice exam answers'],open:'Show content',close:'Hide content',save:'Save answers',check:'Check answers',sent:'Your answers are saved on this device.',mark:'Score',manual:'Written responses require teacher review or comparison with the model answer.',reference:'References',note:'These are practice learning materials, not an official curriculum. Verify topics with your teacher and textbook.',choose:'Choose a grade and subject first.',sample:'Practice material: topics may vary by grade, stream, and curriculum.'};
+const T={ar:{welcome:'تعلم بطريقة منظمة',tagline:'كل مادة مستقلة: الدروس ← التمارين ← الفروض ← التصحيح',stage:'🎒 اختر المرحلة',level:'اختر المستوى',subject:'اختر المادة',workspace:'محتوى المادة',sem:['الدورة الأولى','الدورة الثانية'],sections:['📖 الدروس','✍️ التمارين التفاعلية','📝 الفروض التجريبية','✅ تصحيح التمارين','📋 تصحيح الفروض التجريبية'],open:'عرض المحتوى',close:'إخفاء المحتوى',save:'حفظ الأجوبة',check:'عرض نتيجة التمارين',sent:'تم حفظ أجوبتك على هذا الجهاز.',mark:'النتيجة',manual:'الأسئلة المفتوحة تحتاج تصحيح الأستاذ أو مقارنة مع النموذج.',reference:'مصادر للمراجعة',note:'هذه شروحات تعليمية تدريبية وليست نسخة رسمية من المقرر. تحقق من الدروس والبرنامج مع أستاذك والكتاب المدرسي.',choose:'اختر المستوى والمادة أولاً.',sample:'محتوى تدريبي منظم؛ قد تختلف الوحدات حسب المستوى والشعبة والمنهاج.'},fr:{welcome:'Apprendre de façon organisée',tagline:'Chaque matière séparée : leçons, exercices, devoirs et corrigés',stage:'🎒 Choisir le cycle',level:'Choisir le niveau',subject:'Choisir la matière',workspace:'Contenu de la matière',sem:['1er semestre','2e semestre'],sections:['📖 Leçons','✍️ Exercices','📝 Devoirs blancs','✅ Corrigés des exercices','📋 Corrigés des devoirs'],open:'Afficher',close:'Masquer',save:'Enregistrer',check:'Vérifier',sent:'Réponses enregistrées sur cet appareil.',mark:'Résultat',manual:'Les réponses rédigées nécessitent une correction humaine.',reference:'Sources pour vérifier',note:'Contenu pédagogique de démonstration : vérifiez le programme auprès de votre enseignant.',choose:'Choisissez un niveau et une matière.',sample:'Contenu pédagogique à adapter au niveau et à la filière.'}};
+T.en=EN_UI;function tr(k){return T[lang][k]}function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n}function label(x){return x[lang]||x.ar}function visible(s){if(level===9&&s.id==='info')return false;return s.levels?s.levels.includes(level):s.stages.includes(LEVELS[level-1].stage)}function key(suffix){return ['edu',level,subject,semester,suffix].join('-')}
+// خيار مبسط لتلاميذ الأولى إلى الرابعة ابتدائي، مستقل عن لغة واجهة الموقع.
+function hasLearningLanguage(){return level!==null&&level>=1&&level<=4&&['fr','en'].includes(subject)}
+const BASIC_TRANSLATIONS={
+fr:[
+'عندما نقدم أنفسنا بالفرنسية نقول: Bonjour, je m’appelle Sara، أي مرحباً، اسمي سارة.',
+'لنسأل عن الاسم نقول: Comment tu t’appelles ? أي ما اسمك؟',
+'للجواب عن السؤال نقول: Je m’appelle Youssef، أي اسمي يوسف.',
+'الفعل être يعني يكون، ومن أمثلته: je suis = أنا أكون، tu es = أنت تكون.',
+'الفعل avoir يعني يملك، ومن أمثلته: j’ai = لدي، tu as = لديك.',
+'الجملة الفرنسية تبدأ بحرف كبير وتنتهي بنقطة: Je suis élève.',
+'لفهم نص فرنسي نحدد الشخصيات والمكان والوقت ونقرأ ببطء.',
+'لنكتب فقرة بسيطة نبدأ بفكرة واضحة ونرتب الجمل ثم نراجع الأخطاء.'
+],
+en:[
+'كلمة Hello تعني مرحباً، ونستعملها عند التحية.',
+'عبارة My name is Adam تعني اسمي آدم، ونستعملها للتعريف بالنفس.',
+'السؤال How are you? يعني كيف حالك؟',
+'الجواب I am fine, thank you يعني أنا بخير، شكراً لك.',
+'زمن المضارع البسيط Present simple يستعمل للعادات والأفعال المتكررة.',
+'الجملة I study every day تعني أدرس كل يوم، وهي مثال على المضارع البسيط.',
+'عند قراءة فقرة إنجليزية نبحث عن فكرتها الأساسية والكلمات المعروفة.',
+'الجملة الإنجليزية البسيطة تحتوي غالباً على فاعل وفعل: I read.'
+]};
+function lessonDataArabic(){const topics=currentTopics(),facts=BASIC_TRANSLATIONS[subject];return topics.map((topic,j)=>{const rows=[`عنوان الدرس: ${topic}`,`هدفنا هو فهم هذا الدرس باللغة العربية مع تعلم الكلمات والجمل الصحيحة باللغة ${subject==='fr'?'الفرنسية':'الإنجليزية'}.`];for(let i=0;i<15;i++){rows.push(`${i+1}. شرح مبسط: ${facts[(i+j)%facts.length]}\nتدريب صغير: اقرأ المثال بصوت واضح، ثم اكتبه وفسر معناه بالعربية.`)}rows.push('خلاصة: اقرأ الكلمات مرة أخرى، واحفظ ثلاث عبارات، ثم كوّن جملة جديدة بنفسك.');return {title:topic,body:rows.join('\n\n')}})}
+function displayQuestions(exam){const qs=questions(exam);if(!hasLearningLanguage()||learningLang!=='ar'||exam)return qs;const arPrompts=subject==='fr'?[
+'أكمل الجملة الفرنسية بالفعل الصحيح: Je ___ élève.',
+'أكمل الجملة الفرنسية: Tu ___ un livre.',
+'اكتب كلمة تحية باللغة الفرنسية.',
+'اكتب فقرة قصيرة بالفرنسية تتعرف فيها بنفسك. يمكنك الاستعانة بالشرح العربي.'
+]:[
+'اكتب كلمة «مرحبا» باللغة الإنجليزية.',
+'أكمل الجملة الإنجليزية: I ___ a student.',
+'أكمل الجملة الإنجليزية: She ___ English every day.',
+'اكتب أربع جمل باللغة الإنجليزية للتعريف بنفسك. استعن بالشرح العربي.'
+];return qs.map((q,i)=>({...q,q:arPrompts[i]||q.q}));}
+function renderLearningLanguage(){const box=$('learningLanguage');box.replaceChildren();/* زر الترجمة داخل الدرس فقط، وليس في أعلى المادة */}
+function lessonLanguageButton(){
+ const row=el('div',undefined,'lesson-switch');
+ const button=el('button',learningLang==='ar'?(subject==='fr'?'🇫🇷 Retour au français':'🇬🇧 Back to English'):'🇲🇦 التحول إلى اللغة العربية','btn');
+ button.type='button';button.setAttribute('aria-pressed',String(learningLang==='ar'));
+ button.onclick=()=>{learningLang=learningLang==='ar'?'original':'ar';opened=0;render();};
+ row.append(button);return row;
+}
+const EARLY_LANGUAGE_LESSONS={
+ fr:[
+ {name:'Se présenter et saluer',words:[['Bonjour','صباح الخير / مرحباً'],['Bonsoir','مساء الخير'],['Salut','أهلاً'],['Au revoir','إلى اللقاء'],['Je m’appelle','اسمي'],['Comment tu t’appelles ?','ما اسمك؟'],['Comment ça va ?','كيف الحال؟'],['Je vais bien','أنا بخير']],dialogue:['— Bonjour ! Comment tu t’appelles ?','— Bonjour ! Je m’appelle Lina. Et toi ?','— Je m’appelle Sami. Comment ça va ?','— Je vais bien, merci. Au revoir !'],rule:'Pour se présenter, utilise « Je m’appelle » suivi de ton prénom. Pour saluer, utilise « Bonjour » ou « Salut ».',arabicRule:'للتعريف بنفسك قل Je m’appelle ثم اسمك. للتحية استعمل Bonjour أو Salut. لا تحتاج إلى ترجمة كل كلمة وحدها؛ احفظ الجملة كاملة ثم غيّر الاسم.',practice:['Dis bonjour à ton camarade.','Présente-toi avec ton prénom.','Demande le prénom de ton camarade.','Écris deux salutations différentes.']},
+ {name:'Lire et comprendre un texte',words:[['Je','أنا'],['Tu','أنت'],['École','مدرسة'],['Classe','قسم'],['Livre','كتاب'],['Ami','صديق'],['Lire','يقرأ'],['Écrire','يكتب']],dialogue:['Je m’appelle Nour.','Je vais à l’école le matin.','Dans ma classe, je lis un livre.','Mon ami écrit une phrase.'],rule:'Lis le texte une première fois pour comprendre le sujet, puis relis-le pour trouver qui fait quoi et où.',arabicRule:'اقرأ النص مرة لفهم الموضوع، ثم مرة ثانية لتحديد من يتحدث وأين يقع الحدث وماذا يفعل. استخرج الكلمات المعروفة قبل البحث عن الجديدة.',practice:['Qui parle dans le texte ?','Où va Nour ?','Que lit Nour ?','Recopie une phrase du texte.']},
+ {name:'Le présent des verbes usuels',words:[['Je suis','أنا أكون'],['Tu es','أنت تكون'],['Il est','هو يكون'],['J’ai','عندي'],['Tu as','عندك'],['Nous avons','لدينا'],['Je parle','أنا أتحدث'],['J’aime','أنا أحب']],dialogue:['Je suis élève.','Tu es mon ami.','J’ai un livre.','Nous avons une classe.'],rule:'Le verbe « être » indique un état ; le verbe « avoir » indique souvent la possession. Observe le sujet avant de choisir la forme.',arabicRule:'الفعل être نستعمله للوصف مثل Je suis élève، والفعل avoir للملكية مثل J’ai un livre. انتبه إلى الضمير لأن شكل الفعل يتغير.',practice:['Complète : Je ___ élève.','Complète : Tu ___ un livre.','Écris une phrase avec « suis ».','Écris une phrase avec « ai ».']},
+ {name:'Rédiger un paragraphe',words:[['D’abord','أولاً'],['Ensuite','بعد ذلك'],['Enfin','أخيراً'],['J’habite','أسكن'],['J’aime','أحب'],['Ma famille','عائلتي'],['Mon école','مدرستي'],['Merci','شكراً']],dialogue:['Bonjour ! Je m’appelle Yasmine.','J’ai neuf ans et j’habite au Maroc.','J’aime mon école et mes amis.','Enfin, je remercie mes professeurs.'],rule:'Un paragraphe contient plusieurs phrases liées. Commence par une idée simple, ajoute des détails et termine clairement.',arabicRule:'الفقرة مجموعة جمل مرتبطة بفكرة واحدة. ابدأ بالتعريف بنفسك، ثم أضف معلومتين أو ثلاثاً، واختم بجملة قصيرة. راجع الحروف الكبيرة والنقط.',practice:['Écris ton prénom.','Écris ton âge.','Dis ce que tu aimes.','Relis ton paragraphe et ajoute un point.']}
+ ],
+ en:[
+ {name:'Greetings and introductions',words:[['Hello','مرحباً'],['Good morning','صباح الخير'],['Goodbye','إلى اللقاء'],['My name is','اسمي'],['What is your name?','ما اسمك؟'],['How are you?','كيف حالك؟'],['I am fine','أنا بخير'],['Thank you','شكراً']],dialogue:['— Hello! What is your name?','— My name is Adam. What is your name?','— My name is Sara. How are you?','— I am fine, thank you. Goodbye!'],rule:'Use “Hello” to greet someone and “My name is…” to introduce yourself. A question ends with a question mark.',arabicRule:'للتحية قل Hello، وللتعريف بنفسك قل My name is ثم اسمك. للسؤال عن الاسم قل What is your name?، وللجواب قل My name is...',practice:['Say hello to a friend.','Write your name in English.','Ask someone for their name.','Write a goodbye expression.']},
+ {name:'Present simple',words:[['I read','أنا أقرأ'],['You play','أنت تلعب'],['We study','نحن ندرس'],['They write','هم يكتبون'],['He reads','هو يقرأ'],['She plays','هي تلعب'],['Every day','كل يوم'],['Usually','عادة']],dialogue:['I go to school every day.','My sister reads a book.','We play after school.','He studies English at home.'],rule:'Use the present simple for habits and routines. With he, she or it, we usually add -s to the verb: read → reads.',arabicRule:'المضارع البسيط يعبّر عن العادات، مثل I read every day. مع he وshe وit نضيف غالباً s إلى الفعل: He reads. انتبه إلى اختلاف الضمائر.',practice:['Complete: She ___ (read) a book.','Write one daily habit.','Change “I play” to “He ...”.','Find a present-simple verb in the text.']},
+ {name:'Reading comprehension',words:[['School','مدرسة'],['Teacher','أستاذ'],['Student','تلميذ'],['Book','كتاب'],['Friend','صديق'],['Morning','صباح'],['Classroom','قسم'],['Learn','يتعلم']],dialogue:['My name is Salma.','I go to school in the morning.','My teacher is kind.','I read books with my friends.'],rule:'Read once for the main idea. Read again to answer who, where, when and what questions.',arabicRule:'في فهم المقروء، اقرأ النص كاملاً، ثم ابحث عن الشخصية والمكان والوقت والحدث. لا تخمّن الإجابة؛ استخرجها من النص.',practice:['Who is the student?','When does Salma go to school?','What does she read?','Write one sentence about your school.']},
+ {name:'Writing about daily life',words:[['I wake up','أستيقظ'],['I eat','آكل'],['I study','أدرس'],['I play','ألعب'],['I sleep','أنام'],['At seven','في السابعة'],['After school','بعد المدرسة'],['In the evening','في المساء']],dialogue:['I wake up at seven.','I eat breakfast with my family.','I study at school.','In the evening, I read and sleep.'],rule:'To describe your day, put events in order and use short clear sentences with a subject and a verb.',arabicRule:'لوصف يومك بالإنجليزية رتب الأحداث من الصباح إلى المساء. استعمل جملة قصيرة لكل نشاط، مثل I wake up at seven. ثم راجع كتابة الكلمات.',practice:['Write when you wake up.','Write what you do at school.','Write an evening activity.','Put your four sentences in order.']}
+ ]
+};
+function earlyLanguageLessons(){
+ const data=EARLY_LANGUAGE_LESSONS[subject][(semester-1)*2]&&EARLY_LANGUAGE_LESSONS[subject].slice((semester-1)*2,semester*2);
+ return data.map((item,idx)=>{
+  const arabic=learningLang==='ar';const lines=[];
+  lines.push(arabic?'🎯 هدف الدرس: فهم المفردات والجمل واستعمالها في الحديث والكتابة.':'🎯 '+(subject==='fr'?'Objectif : comprendre et utiliser les mots et les phrases.':'Goal: understand and use words and sentences.'));
+  lines.push(arabic?'📚 المفردات الأساسية ومعانيها:':subject==='fr'?'📚 Vocabulaire :':'📚 Vocabulary:');
+  item.words.forEach(([word,meaning],i)=>lines.push(`${i+1}. ${word}${arabic?' = '+meaning:''}`));
+  lines.push(arabic?'💬 حوار أو نص قصير:':subject==='fr'?'💬 Dialogue ou texte :':'💬 Dialogue or text:');
+  item.dialogue.forEach(line=>lines.push(line));
+  lines.push(arabic?'🧠 شرح القاعدة بالعربية: '+item.arabicRule:'🧠 '+item.rule);
+  lines.push(arabic?'🔍 خطوة للفهم: اقرأ كل جملة بصوت واضح، وابحث عن الكلمة التي تدل على الفعل أو الاسم.':'🔍 '+(subject==='fr'?'Lis chaque phrase à voix haute et repère les mots importants.':'Read each sentence aloud and find the important words.'));
+  lines.push(arabic?'✍️ تطبيقات تدريجية:':subject==='fr'?'✍️ Exercices guidés :':'✍️ Guided practice:');
+  item.practice.forEach((q,i)=>lines.push(`${i+1}. ${q}`));
+  lines.push(arabic?'📝 تدريب كتابي: كوّن أربع جمل جديدة من المفردات السابقة، ثم راجع ترتيب الكلمات.':subject==='fr'?'📝 Production : écris quatre phrases avec les mots appris.':'📝 Writing: make four new sentences using the words.');
+  lines.push(arabic?'🎤 تدريب شفهي: اقرأ الحوار مرتين، ثم مثّل دور كل شخصية بصوت مرتفع.':subject==='fr'?'🎤 Oral : joue les deux rôles du dialogue.':'🎤 Speaking: act out both parts of the dialogue.');
+  lines.push(arabic?'🔁 مراجعة: غطِّ المعاني العربية وحاول تذكرها، ثم اختبر نفسك بالعكس.':subject==='fr'?'🔁 Révision : relis les mots, puis récite-les sans regarder.':'🔁 Review: read the words, then recall them without looking.');
+  lines.push(arabic?'⭐ خلاصة: أتقنت الكلمات الأساسية وقراءة النص، ويمكنك الآن الإجابة عن التمارين.':subject==='fr'?'⭐ Bilan : tu peux saluer, lire et écrire des phrases simples.':'⭐ Summary: you can understand, say and write simple sentences.');
+  return {title:item.name,body:lines.join('\n\n')};
+ });
+}
+
+/* دروس أصلية مكتوبة لـ EduMaroc اعتماداً على عناوين برنامج AlloSchool؛ ليست نسخاً من محتواه. */
+const VERIFIED_LESSONS={
+ hist:[
+ {intro:'عرفت أوروبا خلال القرن التاسع عشر تحولات اقتصادية عميقة ساعدت على انتشار النظام الرأسمالي.',points:[['مفهوم الرأسمالية','نظام اقتصادي يقوم على الملكية الخاصة لوسائل الإنتاج والاستثمار من أجل تحقيق الربح.'],['الثورة الصناعية','أدى استعمال الآلات والمحرك البخاري وتطور المصانع إلى رفع الإنتاج وتوسيع الأسواق.'],['تطور النقل','ساعدت السكك الحديدية والسفن البخارية على نقل المواد الأولية والسلع بسرعة أكبر.'],['تطور الأبناك','ساهمت المصارف وشركات المساهمة في جمع رؤوس الأموال وتمويل المشاريع الكبرى.'],['تركيز الرأسمال','أدى التنافس إلى اندماج بعض الشركات وظهور مؤسسات اقتصادية كبيرة.'],['التحولات الاجتماعية','برزت البرجوازية الصناعية واتسعت الطبقة العاملة وظهرت مطالب تحسين ظروف الشغل.']],conclusion:'ازدهرت الرأسمالية بفعل التصنيع وتطور النقل والتمويل، لكنها رافقتها فوارق اجتماعية.'},
+ {intro:'توسعت الدول الصناعية الأوروبية خارج حدودها خلال القرن التاسع عشر بحثاً عن النفوذ والمصالح الاقتصادية.',points:[['تعريف الإمبريالية','سياسة توسع وهيمنة تمارسها دولة قوية على مناطق أخرى سياسياً أو اقتصادياً أو عسكرياً.'],['الدافع الاقتصادي','البحث عن المواد الأولية والأسواق لتصريف المنتجات وفرص استثمار رؤوس الأموال.'],['الدافع السياسي','التنافس على المكانة الدولية والسيطرة على المواقع الاستراتيجية.'],['الوسائل','المعاهدات غير المتكافئة والضغط الدبلوماسي والتدخل العسكري والاحتلال.'],['النتائج','فقدان مناطق عديدة لاستقلالها واستغلال مواردها وظهور حركات مقاومة.']],conclusion:'ارتبطت الإمبريالية بتطور الرأسمالية الصناعية، لكنها كانت أيضاً مشروعاً سياسياً وعسكرياً.'},
+ {intro:'تعرض المغرب في القرن التاسع عشر وبداية القرن العشرين لضغوط أوروبية متزايدة.',points:[['الضغط العسكري','أظهرت معركة إيسلي سنة 1844 قوة التدخل الفرنسي وتفاوت الإمكانات العسكرية.'],['الضغط الإسباني','انتهت حرب تطوان 1859–1860 بفرض تعويضات مالية ثقيلة على المغرب.'],['الضغط الاقتصادي','زادت الامتيازات التجارية والديون من نفوذ القوى الأجنبية.'],['التنافس الدولي','تنافست دول أوروبية على النفوذ في المغرب، خاصة فرنسا وإسبانيا.'],['الحماية','فُرض نظام الحماية الفرنسية بموجب معاهدة فاس سنة 1912، مع مناطق نفوذ إسبانية.']],conclusion:'ساهمت الضغوط العسكرية والمالية والدبلوماسية في إضعاف سيادة المغرب وصولاً إلى فرض الحماية.'},
+ {intro:'اندلعت الحرب العالمية الأولى سنة 1914 واستمرت حتى سنة 1918، وامتدت آثارها إلى مناطق كثيرة من العالم.',points:[['الأسباب العميقة','التنافس الاستعماري والتسلح والتحالفات والتوتر القومي في أوروبا.'],['السبب المباشر','اغتيال ولي عهد النمسا فرانز فرديناند في سراييفو يوم 28 يونيو 1914.'],['أطراف الحرب','واجهت دول الوفاق دول المركز، وتغيرت المشاركة والتحالفات أثناء الحرب.'],['طبيعة القتال','اتسمت الجبهة الغربية بحرب الخنادق واستعمال أسلحة حديثة ذات خسائر كبيرة.'],['النهاية','انتهت المعارك الأساسية بهدنة 11 نوفمبر 1918.'],['النتائج','خسائر بشرية ومادية هائلة وتغير خرائط سياسية وعقد معاهدات سلام منها فرساي سنة 1919.']],conclusion:'غيرت الحرب العالمية الأولى موازين القوى ومهدت لتوترات دولية جديدة.'},
+ {intro:'ضعفت الإمبراطورية العثمانية تدريجياً في القرن التاسع عشر وتزايد التدخل الأوروبي في أراضيها.',points:[['عوامل الضعف','الصعوبات الإدارية والمالية والتفاوت العسكري مع الدول الصناعية.'],['التدخل الأوروبي','سعت قوى كبرى إلى توسيع نفوذها الاقتصادي والسياسي في المشرق.'],['الحرب العالمية الأولى','دخلت الدولة العثمانية الحرب إلى جانب دول المركز.'],['نهاية الإمبراطورية','انهارت السلطنة بعد الحرب وأُلغيت سنة 1922، ثم أُعلنت الجمهورية التركية سنة 1923.'],['الانتداب','خضعت مناطق من المشرق العربي لترتيبات الانتداب الفرنسي والبريطاني.']],conclusion:'ساهم الضعف الداخلي والحرب والتدخل الاستعماري في إعادة رسم الخريطة السياسية للمشرق.'},
+ {intro:'بدأت الأزمة الاقتصادية العالمية سنة 1929 في الولايات المتحدة وانتشرت إلى اقتصادات أخرى.',points:[['بداية الأزمة','شهدت بورصة نيويورك انهياراً حاداً في أسعار الأسهم في أكتوبر 1929.'],['أسباب مساعدة','المضاربة والشراء بالائتمان واختلال التوازن بين الإنتاج والقدرة الشرائية.'],['الأزمة البنكية','أفلست مصارف وفقد كثير من الناس مدخراتهم أو فرص الاقتراض.'],['النتائج الاجتماعية','ارتفعت البطالة وتراجعت الأجور والاستهلاك في بلدان عديدة.'],['الانتشار','انتقلت الأزمة عبر التجارة والتمويل الدوليين.'],['التدخل الحكومي','اعتمدت الولايات المتحدة لاحقاً إصلاحات وبرامج اقتصادية واجتماعية ضمن الصفقة الجديدة.']],conclusion:'أظهرت أزمة 1929 ترابط الاقتصاد العالمي والحاجة إلى تنظيم الأسواق والحماية الاجتماعية.'}
+ ],
+ geo:[
+ {intro:'تضم منطقة المغرب العربي بلداناً متجاورة تجمعها روابط تاريخية وجغرافية وثقافية.',points:[['الموقع','تقع المنطقة في شمال غرب إفريقيا وتطل على البحر الأبيض المتوسط والمحيط الأطلسي في أجزاء منها.'],['عناصر الوحدة','توجد روابط تاريخية وثقافية ولغوية ودينية وتبادلات بشرية واقتصادية.'],['التنوع الطبيعي','تتباين التضاريس بين السهول والجبال والهضاب والصحراء.'],['التنوع المناخي','يسود مناخ متوسطي في أجزاء شمالية ومناخ صحراوي في مساحات واسعة جنوباً.'],['السكان والاقتصاد','تختلف الكثافة السكانية والأنشطة الاقتصادية والموارد بين البلدان.']],conclusion:'تجمع بلدان المغرب العربي مقومات مشتركة مهمة مع تنوع طبيعي وبشري.'},
+ {intro:'يمكن لبلدان المغرب العربي أن تستفيد من التعاون الاقتصادي لكنها تواجه تحديات متعددة.',points:[['التكامل','يقصد به تعاون الاقتصادات وتبادل السلع والخدمات والخبرات لتحقيق منافع مشتركة.'],['مقومات التعاون','التقارب الجغرافي والموارد الطبيعية والأسواق والروابط الاجتماعية.'],['التحديات','تفاوت التنمية وضعف المبادلات البينية والعوائق السياسية واللوجستية.'],['فرص التطوير','تحسين النقل والربط الطاقي وتسهيل التجارة والتعاون في التعليم والبحث.']],conclusion:'يتطلب التكامل الفعلي مؤسسات فاعلة وثقة وتنسيقاً طويل المدى.'},
+ {intro:'تأسس اتحاد المغرب العربي سنة 1989 بوصفه إطاراً للتعاون الإقليمي.',points:[['التأسيس','أُعلن عن تأسيس الاتحاد في مراكش يوم 17 فبراير 1989.'],['الأعضاء','المغرب والجزائر وتونس وليبيا وموريتانيا.'],['الأهداف','تعزيز التعاون والتكامل الاقتصادي وتنسيق بعض السياسات بين الدول الأعضاء.'],['أهمية الموقع','تقع المنطقة عند تقاطع فضاءات إفريقية ومتوسطية وأطلسية.'],['الصعوبات','تؤثر الخلافات السياسية وضعف التنسيق في تقدم مشاريع الاندماج.']],conclusion:'يمثل الاتحاد خياراً استراتيجياً للتعاون، لكن تحقيق أهدافه يتطلب تجاوز العوائق.'}
+ ],
+ civ:[
+ {intro:'المشاركة في الحياة المدرسية والمجتمعية تساعد على تحمل المسؤولية واحترام الرأي المختلف.',points:[['المشاركة','المساهمة في اتخاذ القرارات أو تنفيذ الأنشطة التي تهم الجماعة.'],['الانتخاب','طريقة لاختيار ممثلين وفق قواعد محددة مع احترام حرية الاختيار.'],['حقوق المشاركين','التعبير عن الرأي والحصول على المعلومات والمساواة في المعاملة.'],['واجباتهم','احترام القواعد والآخرين والالتزام بالنتائج القانونية والمشاركة المسؤولة.'],['تطبيق مدرسي','يمكن انتخاب ممثل للقسم بعد عرض البرامج والتصويت وفرز الأصوات بشفافية.']],conclusion:'تعزز المشاركة الديمقراطية الحوار والمسؤولية والثقة داخل المجتمع.'},
+ {intro:'يمكن للمواطنين المساهمة في تشخيص مشكلات محيطهم واقتراح حلول واقعية.',points:[['تحديد المشكلة','وصف المشكلة بدقة مثل النفايات أو ضعف الإنارة أو غياب فضاء للعب.'],['جمع المعلومات','الملاحظة والاستبيان والحديث مع المعنيين وجمع بيانات قابلة للتحقق.'],['البحث عن الأسباب','التمييز بين الأعراض والأسباب المباشرة وغير المباشرة.'],['اقتراح الحلول','ترتيب حلول قابلة للتطبيق وفق التكلفة والأثر والجهة المسؤولة.'],['التقييم','متابعة النتائج وتعديل الخطة إذا لم تحقق أهدافها.']],conclusion:'المواطنة الفاعلة تجمع بين تشخيص المشكلة والحوار والعمل الجماعي.'}
+ ]
+};
+function verifiedLesson(topic,index){
+ if(level!==9||semester!==1||!VERIFIED_LESSONS[subject]||!VERIFIED_LESSONS[subject][index])return null;
+ const d=VERIFIED_LESSONS[subject][index];const lines=[`عنوان الدرس: ${topic}`,`تمهيد: ${d.intro}`];
+ d.points.forEach(([heading,body],i)=>{lines.push(`${i+1}. ${heading}: ${body}`);lines.push(`فهم الفكرة: استخرج من هذه الفقرة مفهومًا أساسياً، ثم اشرح علاقته بعنوان الدرس بكلماتك.`)});
+ lines.push(`خلاصة: ${d.conclusion}`,'تدريب للفهم: ما الفكرة الأساسية في هذا الدرس؟ اذكر سببين أو عنصرين مهمين، ثم اكتب مثالاً مناسباً.','نشاط وثائقي: ابحث في كتابك المدرسي عن خريطة أو وثيقة أو جدول مرتبط بالموضوع، وحدد مصدره وتاريخه والفكرة التي يوضحها.','مراجعة: اكتب خمسة مصطلحات جديدة واشرحها، ثم أنشئ ملخصاً من ست جمل.');
+ return {title:topic,body:lines.join('\n\n')};
+}
+function lessonData(){if(level>=1&&level<=6&&PRIMARY_LESSON_INDEX[subject]&&!(hasLearningLanguage()))return currentTopics().map(primaryLesson);const topics=currentTopics(),facts=INFO[subject];const isFr=subject==='fr';const isEn=subject==='en';const target=level<=6?15:25;return topics.map((topic,j)=>{const verified=verifiedLesson(topic,j);if(verified)return verified;const curated=curatedLesson(topic);if(curated)return curated;if(level>=7 && level<=9 && EXTRA_TOPICS[subject])return expandedLesson(topic,j);const rows=[isFr?'Objectif : découvrir la notion, l’expliquer et la mettre en pratique.':isEn?'Learning goal: understand the topic and use it in speaking, reading and writing.':`هدف الدرس: فهم «${topic}» واستعمال ما تعلمته في مواقف جديدة.`];const steps=isFr?['Observation','Définition','Explication','Exemple','Analyse','Application','Conseil','Vérification']:isEn?['Key idea','Explanation','Example','Practice','Language tip','Reading','Writing','Review']:['تعريف ومفهوم','شرح الفكرة','مثال تطبيقي','تحليل','ربط بالمكتسبات','تطبيق','ملاحظة مهمة','تأكد من فهمك'];for(let i=0;i<target;i++){const fact=facts[(i+j*3)%facts.length];const step=steps[i%steps.length];const prompt=isFr?'Explique cette idée avec tes propres mots et donne un exemple.':isEn?'Write your own example and explain the idea in simple English.':`اربط هذه المعلومة بموضوع «${topic}»، ثم حاول صياغة مثال من إنشائك.`;rows.push(`${i+1}. ${step}: ${fact}\n${prompt}`)}rows.push(isFr?'Synthèse : résume les points essentiels et prépare trois questions.':isEn?'Summary: write five key words, three example sentences, and one question.':'خلاصة الدرس: دوّن خمس أفكار رئيسية، وحاول حل تمرين دون الرجوع إلى الشرح.');return {title:topic,body:rows.join('\n\n')}})}
+function questions(exam=false){const topic=CURRICULUM[subject][semester-1][exam?1:0],facts=INFO[subject];if(subject==='math'){return exam?[{q:'احسب: 18 + 27 = ؟',answer:'45'},{q:'احسب: 6 × 7 = ؟',answer:'42'},{q:'احسب مساحة مستطيل طوله 8 وعرضه 5.',answer:'40'},{q:`اشرح طريقة حل مسألة مرتبطة بموضوع «${topic}».`,model:'نحدد المعطيات والمطلوب، ثم نختار العملية ونحسب ونتحقق من النتيجة.'}]:[{q:'احسب: 7 + 5 = ؟',answer:'12'},{q:'احسب: 15 - 6 = ؟',answer:'9'},{q:'احسب: 4 × 3 = ؟',answer:'12'},{q:'ما مساحة مستطيل طوله 4 وعرضه 3؟',answer:'12'}]}
+if(subject==='de')return [{q:'كيف نقول «مرحبا» بالألمانية؟',answer:'hallo'},{q:'كيف نقول «اسمي» بالألمانية؟ اكتب العبارة.',answer:'ich heiße'},{q:'اكتب العدد ثلاثة بالألمانية.',answer:'drei'},{q:'كوّن جملة للتعريف بنفسك بالألمانية.',model:'Ich heiße Sara. Ich bin dreizehn Jahre alt.'}];
+if(subject==='es')return [{q:'كيف نقول «مرحبا» بالإسبانية؟',answer:'hola'},{q:'كيف نقول «اسمي» بالإسبانية؟',answer:'me llamo'},{q:'اكتب العدد ثلاثة بالإسبانية.',answer:'tres'},{q:'كوّن جملة للتعريف بنفسك بالإسبانية.',model:'Hola, me llamo Sara. Tengo catorce años.'}];
+if(subject==='en')return [{q:'Write the English word for «مرحبا».',answer:'hello'},{q:'Complete: I ___ a student.',answer:'am'},{q:'Complete: She ___ English every day.',answer:'studies'},{q:'Write four sentences introducing yourself in English.',model:'Hello! My name is Sara. I am a student. I live in Morocco. I like learning English.'}];
+if(subject==='fr')return [{q:'Complète : Je ___ élève.',answer:'suis'},{q:'Complète : Tu ___ un livre.',answer:'as'},{q:'Écris une salutation en français.',answer:'bonjour'},{q:`Rédige un petit paragraphe sur «${topic}».`,model:'Bonjour ! Je m’appelle Sara. Je suis élève. J’aime apprendre le français.'}];
+const generic=[{q:`اذكر الفكرة الرئيسية من موضوع «${topic}».`,model:facts[0]},{q:'اكتب معلومتين صحيحتين من الدرس.',model:`1) ${facts[1]} 2) ${facts[2]}`},{q:'اشرح بمثال من عندك ما تعلمته.',model:facts[3]},{q:'كيف تطبق ما تعلمته في موقف عملي؟',model:facts[4]}];return exam?[...generic,{q:'قارن بين فكرتين وردتا في الدرس، وادعم إجابتك بحجة.',model:`${facts[5]} ${facts[6]}`}]:generic}
+function makeQuestionBlock(q,i,kind){const wrap=el('div',undefined,'question');wrap.append(el('strong',`${i+1}. ${q.q}`));const field=el('textarea',undefined,'answer');field.rows=kind==='exam'?4:3;field.placeholder=subject==='fr'?'Écrivez votre réponse ici...':subject==='en'?'Type your answer here...':'اكتب جوابك هنا باستعمال لوحة المفاتيح...';field.value=localStorage.getItem(key(kind+'-'+i))||'';field.addEventListener('input',()=>localStorage.setItem(key(kind+'-'+i),field.value));wrap.append(field);return wrap}
+function topicExercise(topic,i){
+ const box=el('div',undefined,'question');
+ const qs=subject==='fr'?[`Explique avec tes mots : ${topic}.`,`Écris deux exemples sur « ${topic} ».`,`Utilise la notion dans une phrase correcte.`]:subject==='en'?[`Explain the main idea of “${topic}”.`,`Give two examples related to “${topic}”.`,`Write one correct sentence using this topic.`]:[`عرّف موضوع «${topic}» بأسلوبك.`,`اذكر مثالين أو معلومتين صحيحتين من درس «${topic}».`,`اشرح كيف تستعمل ما تعلمته من هذا الدرس في تطبيق أو وضعية.`];
+ qs.forEach((q,j)=>{const item=el('div',undefined,'question');item.append(el('strong',`${j+1}. ${q}`));const a=el('textarea',undefined,'answer');a.rows=3;const storage=key(`topic-${i}-q-${j}`);a.value=localStorage.getItem(storage)||'';a.placeholder=subject==='fr'?'Écris ta réponse...':subject==='en'?'Type your answer...':'اكتب جوابك هنا...';a.oninput=()=>localStorage.setItem(storage,a.value);item.append(a);box.append(item)});
+ const hint=el('p',subject==='fr'?'Corrigé indicatif : définis la notion, donne des exemples exacts et justifie ta réponse.':subject==='en'?'Suggested correction: explain the idea accurately and give relevant examples.':'تصحيح إرشادي: عرّف المفهوم بدقة، واستعمل مثالين صحيحين، واشرح العلاقة بموضوع الدرس.','muted');const toggle=el('button',lang==='fr'?'Afficher le corrigé':lang==='en'?'Show correction':'إظهار تصحيح التمرين','btn');hint.hidden=true;toggle.onclick=()=>hint.hidden=!hint.hidden;box.append(toggle,hint);return box;
+}
+function renderPane(kind){
+ const pane=el('div',undefined,'content');const topics=currentTopics();const lessons=hasLearningLanguage()?earlyLanguageLessons():lessonData();
+ if(kind===0||kind===1){
+  pane.append(el('p',kind===0?'اضغط على عنوان الدرس لقراءة الشرح الخاص به.':'اضغط على عنوان تمارين الدرس لكتابة الأجوبة بالكلافيي.','muted'));
+  if(kind===0&&hasLearningLanguage())pane.append(lessonLanguageButton());
+  topics.forEach((topic,i)=>{
+   const details=el('details',undefined,'topic-item');const summary=el('summary',`${kind===0?'📖':'✍️'} ${kind===0?'الدرس':'تمارين الدرس'} ${i+1}: ${topic}`);details.append(summary);
+   if(kind===0){const entry=lessons[i]||{body:expandedLesson(topic,i).body};details.append(el('div',entry.body,'lesson'))}
+   else details.append(topicExercise(topic,i));
+   pane.append(details);
+  });
+  if(kind===0&&(VERIFIED_SOURCE_LINKS[`${level}:${subject}`]||CURATED_SOURCE[`${level}:${subject}`]||ALLOSCHOOL_URLS[subject]||(level<=6&&PRIMARY_REFERENCE))){const a=el('a','📚 مراجعة فهرس الدروس في AlloSchool ↗');a.href=VERIFIED_SOURCE_LINKS[`${level}:${subject}`]||CURATED_SOURCE[`${level}:${subject}`]||ALLOSCHOOL_URLS[subject]||(level<=6?PRIMARY_REFERENCE:null);a.target='_blank';a.rel='noopener noreferrer';pane.append(a)}
+ }else if(kind===2){
+  const qs=displayQuestions(true);pane.append(el('p','فرض تجريبي: اكتب الأجوبة باستعمال لوحة المفاتيح. تُحفظ تلقائياً على جهازك.','warning'));qs.forEach((q,i)=>pane.append(makeQuestionBlock(q,i,'exam')));pane.append(el('p',tr('manual'),'muted'));
+ }else if(kind===3){
+  topics.forEach((topic,i)=>{const details=el('details',undefined,'topic-item');details.append(el('summary',`✅ تصحيح تمارين الدرس ${i+1}: ${topic}`),el('p','إجابة نموذجية إرشادية: ينبغي تعريف المفهوم بدقة، وتقديم مثالين مرتبطين بالدرس، وتفسيرهما. يمكن أن تتعدد الإجابات الصحيحة.','muted'));pane.append(details)})
+ }else{
+  displayQuestions(true).forEach((q,i)=>{const details=el('details',undefined,'topic-item');details.append(el('summary',`📋 تصحيح سؤال الفرض ${i+1}: ${q.q}`),el('p',q.answer||q.model||'تقبل الإجابات الصحيحة المدعمة بالتعليل.'));pane.append(details)});
+ }
+ return pane;
+}
+function render(){document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';$('welcome').textContent=tr('welcome');$('tagline').textContent=tr('tagline');$('stageHeading').textContent=tr('stage');$('levelHeading').textContent=tr('level');$('subjectHeading').textContent=tr('subject');$('workspaceHeading').textContent=tr('workspace');$('referenceHeading').textContent=tr('reference');$('referenceNote').textContent=tr('note');$('langBtn').textContent=lang==='ar'?'Français':lang==='fr'?'English':'العربية';const stages=$('stages');stages.replaceChildren();T[lang].sem;[['🎒','الابتدائي','Primaire','Primary'],['📚','الإعدادي','Collège','Middle school'],['🎓','الثانوي والباكالوريا','Lycée et baccalauréat','High school and baccalaureate']].forEach((s,i)=>{const b=el('button',undefined,'card'+(stage===i?' active':''));b.append(el('span',s[0],'icon'),el('strong',s[lang==='ar'?1:lang==='fr'?2:3]));b.onclick=()=>{stage=i;level=null;subject=null;opened=null;learningLang='original';render()};stages.append(b)});const levels=$('levels');levels.replaceChildren();LEVELS.forEach((l,i)=>{if(l.stage!==stage)return;const b=el('button',label(l),'card'+(level===i+1?' active':''));b.onclick=()=>{level=i+1;subject=null;opened=null;learningLang='original';render()};levels.append(b)});const subjects=$('subjects');subjects.replaceChildren();if(level!==null)SUBJECTS.filter(visible).forEach(s=>{const b=el('button',undefined,'card'+(subject===s.id?' active':''));b.append(el('span',ICONS[s.id]||'📘','icon subjecticon'),el('strong',label(s)));b.onclick=()=>{subject=s.id;opened=null;learningLang='original';render();$('workspace').scrollIntoView({behavior:'smooth',block:'start'})};subjects.append(b)});const sem=$('semesters'),sections=$('sections');sem.replaceChildren();sections.replaceChildren();renderLearningLanguage();$('breadcrumb').textContent=level&&subject?`${label(LEVELS[level-1])} • ${label(SUBJECTS.find(s=>s.id===subject))} • ${tr('sample')}`:tr('choose');if(!subject)return;tr('sem').forEach((s,i)=>{const b=el('button',s,'btn'+(semester===i+1?' active':''));b.onclick=()=>{semester=i+1;opened=null;render()};sem.append(b)});T[lang].sections.forEach((title,i)=>{const b=el('button',title+'  ▾','tab'+(opened===i?' active':''));b.onclick=()=>{opened=opened===i?null:i;render()};sections.append(b);if(opened===i)sections.append(renderPane(i))})}
+
+// فهارس الإعدادي: عناوين دروس منظمة حسب المستوى والمادة والدورة.
+// بعض العناوين مراجعة تعليمية مقترحة وليست نقلاً حرفياً من AlloSchool.
+const COLLEGE_INDEX={
+7:{
+ ar:[['الجملة الاسمية والجملة الفعلية','المبتدأ والخبر','الفعل الصحيح والمعتل','الفاعل ونائب الفاعل','المفعول به','النعت والمنعوت'],['الجملة المركبة','المفعول المطلق','المفعول لأجله','الحال','التمييز','التعبير والإنشاء: وصف مكان']],
+ fr:[['Les types de phrases','La phrase affirmative et négative','Le groupe nominal','Le présent de l’indicatif','Les déterminants','Le vocabulaire de la famille'],['Les adjectifs qualificatifs','Le passé composé','L’imparfait','Le futur simple','Les compléments COD et COI','Le vocabulaire de l’école']],
+ en:[['Greetings and introductions','Personal pronouns','Verb to be','Numbers and dates','Family members','School objects'],['Present simple','Daily routines','There is and there are','Prepositions of place','Food and drinks','Describing people']],
+ math:[['الأعداد الصحيحة الطبيعية والعشرية','العمليات على الأعداد العشرية','الأعداد الكسرية','المستقيم وأجزاؤه','الزوايا','المثلثات'],['الأعداد النسبية','الجمع والطرح في الأعداد النسبية','الحساب الحرفي','المعادلات البسيطة','التماثل المركزي','المساحات والحجوم']],
+ ie:[['سورة ق: مدخل للتزكية','العقيدة الصحيحة والعقائد الفاسدة','بعثة الرسول ﷺ والدعوة السرية','الطهارة','الصلاة','الإتقان'],['الإيمان بالغيب','الهجرة إلى الحبشة','الصبر واليقين','الصدق والأمانة','حق الله: الشكر','التعاون والتضامن']],
+ svt:[['استكشاف وسط طبيعي','التنفس في أوساط مختلفة','التغذية عند الحيوانات','العلاقات الغذائية','تصنيف الكائنات الحية','التوازن الطبيعي'],['الخروج الجيولوجي','الصخور الرسوبية','تشكل الصخور الرسوبية','المستحاثات','السلم الاستراتيغرافي','الموارد الطبيعية']],
+ pc:[['الماء في الطبيعة','حالات المادة','الكتلة والحجم','الكتلة الحجمية','الضغط والغازات','الخلائط وفصل مكوناتها'],['الكهرباء في حياتنا','الدارة الكهربائية البسيطة','الموصلات والعوازل','التركيب على التوالي','التركيب على التوازي','السلامة الكهربائية']],
+ info:[['مكونات الحاسوب','وحدات الإدخال والإخراج','نظام التشغيل','الملفات والمجلدات','معالجة النصوص','حفظ المستندات'],['الجداول الإلكترونية','العروض التقديمية','الشبكات والإنترنت','البحث عن المعلومات','الأمن الرقمي','حقوق المؤلف']],
+ hist:[['حضارة بلاد الرافدين','حضارة مصر القديمة','الحضارة الإغريقية','الحضارة الرومانية','نشأة الدولة الإسلامية','الخلافة الإسلامية'],['المغرب القديم: الفينيقيون والقرطاجيون','المغرب في العهد الروماني','المغرب بعد الفتح الإسلامي','الدولة الإدريسية','المرابطون والموحدون','قراءة وثيقة تاريخية']],
+ geo:[['الأرض في الكون','الإحداثيات الجغرافية','الخريطة ومكوناتها','التضاريس','المناخ','المجالات الطبيعية'],['السكان وتوزيعهم','الوسط الحضري','الوسط القروي','الأنشطة الفلاحية','الأنشطة الصناعية','المحافظة على البيئة']],
+ civ:[['الكرامة','الحرية','المساواة','العدل','التسامح','حقوق الطفل'],['الديمقراطية','التضامن','الحوار','الحق والواجب','العمل الجماعي','المسؤولية']],
+ arts:[['الألوان الأساسية','المزج اللوني','الخط والشكل'],['التكوين التشكيلي','الملصق الفني','التعبير البصري']]
+},
+8:{
+ ar:[['الاسم المقصور والمنقوص والممدود','المثنى وجمع المذكر السالم','جمع المؤنث السالم','جمع التكسير','اسم الفاعل','اسم المفعول'],['اسم التفضيل','التعجب','النداء','الاستثناء','العدد والمعدود','التعبير: كتابة رسالة']],
+ fr:[['La description','Les temps du récit','L’imparfait','Le passé simple','Les connecteurs chronologiques','Le portrait'],['Le discours direct et indirect','La proposition relative','Les pronoms relatifs','L’expression de la cause','L’expression de la conséquence','La lettre personnelle']],
+ en:[['Present simple revision','Present continuous','Past simple','Irregular verbs','Hobbies and free time','Comparatives'],['Future with going to','Modal can and must','Health and food','Travel vocabulary','Superlatives','Writing an email']],
+ math:[['تقديم الأعداد الجذرية','جمع وطرح الأعداد الجذرية','التماثل المحوري','جداء وخارج الأعداد الجذرية','التوازي ومنتصفات أضلاع مثلث','الأعداد الجذرية والقوى','المستقيمات الهامة في مثلث'],['الحساب الحرفي','المثلث القائم الزاوية والدائرة','المعادلات','مبرهنة فيتاغورس','المتجهات والإزاحة','التناسبية والدوال الخطية','الإحصاء']],
+ ie:[['سورة النجم','الإيمان بالملائكة','الهجرة النبوية','العبادة غاية الخلق','الزكاة','الاستقامة'],['الإيمان بالرسل','صلح الحديبية','الحج','حق النفس','التواضع','الإحسان']],
+ svt:[['نظرية تكتونية الصفائح','الزلازل وعلاقتها بتكتونية الصفائح','البراكين وعلاقتها بتكتونية الصفائح','التشوهات التكتونية','تشكل الصخور الصهارية','تشكل السلاسل الجبلية'],['التوالد عند الحيوانات','التوالد عند النباتات','التوالد عند الإنسان','انتقال الصفات الوراثية عند الإنسان','الوراثة عند الإنسان']],
+ pc:[['الهواء من حولنا','مكونات الهواء','الجزيئات والذرات','الاحتراقات','التفاعل الكيميائي','قوانين التفاعل الكيميائي'],['الضوء وانتشاره','العدسات الرقيقة','التيار الكهربائي','التوتر الكهربائي','المقاومة الكهربائية','قانون أوم']],
+ info:[['معالجة النصوص المتقدمة','الجداول الحسابية','الصيغ الحسابية','الرسوم البيانية','العروض التقديمية','الوسائط المتعددة'],['مبادئ الخوارزميات','المتغيرات','الشروط','التكرار','الإنترنت والتواصل','حماية البيانات']],
+ hist:[['الدولة الإدريسية','المرابطون والموحدون','حرب الاسترداد','الغزو الإيبيري ورد فعل المغاربة','الدولة العلوية','المغرب بين الانفتاح والانغلاق'],['الإمبراطورية العثمانية','النهضة الأوروبية','الاكتشافات الجغرافية','الثورة الصناعية','الثورة الفرنسية','نشأة الولايات المتحدة الأمريكية']],
+ geo:[['المغرب: الموقع والخصائص','التضاريس المغربية','المناخ في المغرب','الموارد المائية','السكان بالمغرب','الأنشطة الفلاحية'],['الصناعة بالمغرب','التجارة والخدمات','النقل والمواصلات','التمدين','التنمية المستدامة','المشكلات البيئية']],
+ civ:[['حقوق الإنسان','المواطنة','الحق في التعليم','الحق في الصحة','المساواة','محاربة التمييز'],['المشاركة المواطنة','الجمعيات','التطوع','حماية الممتلكات العامة','التنمية المحلية','المحافظة على البيئة']],
+ arts:[['المنظور','التباين اللوني','التصوير'],['التصميم','الخط العربي','الملصقات']]
+},
+9:{
+ ar:[['اسم الآلة','اسما الزمان والمكان','النسبة','التصغير','الممنوع من الصرف','الاشتقاق'],['أسلوب المدح والذم','الاختصاص','التحذير والإغراء','الاستفهام','التوكيد','الحجاج والتعبير']],
+ fr:[['Les genres de textes','Le récit autobiographique','Les temps du passé','Les figures de style','La description','Le discours rapporté'],['L’argumentation','Exprimer son opinion','Les connecteurs logiques','La lettre de motivation','Le compte rendu','La production écrite']],
+ en:[['Present perfect','Past simple versus present perfect','Passive voice','Relative pronouns','Environmental vocabulary','Giving advice'],['First conditional','Reported speech introduction','Expressing opinions','Technology vocabulary','Jobs and careers','Writing a formal email']],
+ math:[['الجذور المربعة','الحساب الحرفي','المتطابقات الهامة','المعادلات والمتراجحات','مبرهنة طاليس','مبرهنة فيتاغورس'],['النشر والتعميل','الدوال الخطية والتآلفية','نظمة معادلتين','الإحصاء','المثلثات','الهندسة في الفضاء']],
+ ie:[['سورة الحشر','الإيمان والعلم','السيرة النبوية','حق الله: التقوى','الإنفاق في سبيل الله','المسؤولية'],['سورة الحديد','الزكاة وأحكامها','الصوم','الرحمة','الإحسان','حقوق الغير']],
+ svt:[['الهضم والامتصاص المعوي','التنفس عند الإنسان','الدوران الدموي','الإبراز البولي','التغذية والصحة','التوازن الغذائي'],['الجهاز العصبي','الحركة العضلية','الجهاز التناسلي','الوراثة البشرية','المناعة','التربية الصحية']],
+ pc:[['المواد من حولنا','الذرات والأيونات','أكسدة الفلزات','التفاعلات الكيميائية','المحاليل الحمضية والقاعدية','الكشف عن الأيونات'],['الحركة والسكون','السرعة المتوسطة','القوى','الوزن والكتلة','الطاقة الكهربائية','القدرة الكهربائية']],
+ hist:[['ازدهار الرأسمالية الأوروبية','الإمبريالية وليدة الرأسمالية','الضغط الاستعماري على المغرب','الحرب العالمية الأولى','انهيار الإمبراطورية العثمانية','أزمة 1929'],['ظاهرة الأنظمة الديكتاتورية','الحرب العالمية الثانية','القضية الفلسطينية','المغرب: الكفاح من أجل الاستقلال','المغرب: استكمال الوحدة الترابية','بناء الدولة المغربية الحديثة']],
+ geo:[['المغرب العربي: عناصر الوحدة والتنوع','المغرب العربي: التكامل والتحديات','اتحاد المغرب العربي','الاتحاد الأوروبي: إمكانياته ومكانته','الاتحاد الأوروبي: مؤسساته','الولايات المتحدة الأمريكية: قوة اقتصادية'],['اليابان: قوة تكنولوجية','روسيا: التحولات الاقتصادية','مصر: نموذج تنموي','نيجيريا: تناقضات التنمية','البرازيل: نمو اقتصادي','كوريا الجنوبية: قوة صاعدة']],
+ civ:[['المشاركة حق وواجب','كيف نعالج مشكلاً اجتماعياً؟','مسؤولية الدولة في إيجاد حلول','دور المجتمع المدني','تخليق الحياة العامة','محاربة الرشوة'],['الحفاظ على المرفق العمومي','حقوق الإنسان','التضامن الدولي','المشاركة في الحياة المدرسية','حماية البيئة','مشروع مواطن']],
+ es:[['Saludos y presentaciones','El alfabeto español','Los números','Ser y estar','La familia','Los artículos'],['El presente de indicativo','Los adjetivos','La escuela','Los días y los meses','La vida cotidiana','Describir mi ciudad']],
+ de:[['Begrüßungen','Das Alphabet','Zahlen und Alter','Personalpronomen','Sein und haben','Die Familie'],['Präsens der Verben','Artikel der die das','Schule und Fächer','Tage und Monate','Hobbys','Mein Tagesablauf']],
+ arts:[['الهوية البصرية','التصميم الرقمي','التصوير الفوتوغرافي'],['الإشهار','الفن المعاصر','المشروع الفني']]
+}}
+;
+// روابط فهارس مرجعية موثوقة؛ الإسبانية والألمانية إضافتان بطلب المستخدم، وليستا مؤكدتين ضمن فهرس AlloSchool للإعدادي.
+const COLLEGE_SOURCE='https://www.alloschool.com/category/middle-school?hl=ar';
+const COLLEGE_SPECIFIC={
+ '8:math':'https://www.alloschool.com/course/alriadhiat-althania-iadadi',
+ '8:svt':'https://www.alloschool.com/course/alom-alhiaa-oalardh-althania-iadadi',
+ '7:ar':'https://www.alloschool.com/course/allgha-alarbia-alaola-iadadi',
+ '7:fr':'https://www.alloschool.com/course/francais-1ere-annee-college',
+ '7:en':'https://www.alloschool.com/course/anglais-1ere-annee-college',
+ '7:ie':'https://www.alloschool.com/course/altrbia-alislamia-alaola-iadadi',
+ '8:hist':'https://www.alloschool.com/course/alijtmaaiat-althania-iadadi',
+ '9:hist':'https://www.alloschool.com/course/alijtmaaiat-althaltha-iadadi'
+};
+const _previousCurrentTopics=currentTopics;
+currentTopics=function(){if(level>=7&&level<=9&&COLLEGE_INDEX[level]?.[subject])return COLLEGE_INDEX[level][subject][semester-1];return _previousCurrentTopics()};
+const _previousRenderPane=renderPane;
+renderPane=function(kind){const pane=_previousRenderPane(kind);if(level>=7&&level<=9){const a=el('a','📚 تحقق من فهرس المادة في AlloSchool ↗');a.href=COLLEGE_SPECIFIC[`${level}:${subject}`]||COLLEGE_SOURCE;a.target='_blank';a.rel='noopener noreferrer';pane.append(el('hr'));pane.append(a);if(['de','es'].includes(subject))pane.append(el('p','تنبيه: دروس الإسبانية والألمانية إضافات تدريبية، وليست فهرساً موثقاً من AlloSchool.','muted'));}return pane};
+
+
+// فهارس إضافية للثانوي: عناوين تعليمية منظّمة، وليست نسخاً حرفية من AlloSchool.
+const HIGH_SCHOOL_INDEX = {
+  10: {
+    ar:[['النص الحجاجي','النص السردي','الخبر والإنشاء','التشبيه والاستعارة','الجملة الاسمية والفعلية','مهارة تحليل نص'],['النص الوصفي','النص التفسيري','المجاز والكناية','أساليب التوكيد','الروابط الحجاجية','مهارة إنتاج نص حجاجي']],
+    fr:[['Les types de phrases','La phrase simple et complexe','Les temps du récit','Les connecteurs logiques','Le texte narratif','Le texte descriptif'],['Le texte argumentatif','La nouvelle réaliste','La nouvelle fantastique','La concession','Le discours direct et indirect','La production écrite']],
+    en:[['Introducing yourself','Present simple and continuous','Past simple','Describing people','School and education','Writing a paragraph'],['Present perfect','Future forms','Modals','Environment vocabulary','Expressing opinions','Writing an email']],
+    math:[['المجموعات العددية','الترتيب في مجموعة الأعداد الحقيقية','الحساب المتجهي','الإسقاط','المعادلات والمتراجحات','الدوال العددية'],['المثلثات','الجداء السلمي','الهندسة الفضائية','الإحصاء','التحويلات الهندسية','دراسة الدوال']],
+    ie:[['سورة الكهف','التوحيد والحرية','السيرة النبوية','فقه العبادات','الصدق والأمانة','القيم الإسلامية'],['الاجتهاد والتجديد','العدل والإحسان','الأسرة في الإسلام','الحقوق والواجبات','التسامح والتعايش','المسؤولية']],
+    svt:[['النظام البيئي','العوامل المناخية','العوامل التربوية','تدفق المادة والطاقة','التوازنات الطبيعية','توزيع الكائنات الحية'],['التغذية عند النباتات','التركيب الضوئي','التنفس والتخمر','تبادل الغازات','الدورات البيوجيوكيميائية','المحافظة على البيئة']],
+    pc:[['التجاذب الكوني','الأفعال الميكانيكية','الحركة','مبدأ القصور','الأنواع الكيميائية','استخراج الأنواع الكيميائية'],['التيار الكهربائي المستمر','التوتر الكهربائي','الموصلات الأومية','المول وكمية المادة','التركيز المولي','التحولات الكيميائية']],
+    info:[['مكونات الحاسوب','تمثيل المعلومات','أنظمة التشغيل','الشبكات','معالجة النصوص','أمن المعلومات'],['الجداول الإلكترونية','الصيغ والدوال','الخوارزميات','أساسيات البرمجة','قواعد البيانات','المواطنة الرقمية']],
+    philo:[['نشأة الفلسفة','الفلسفة والأسطورة','السؤال الفلسفي','الحجاج الفلسفي','الفلسفة والعلم','الفلسفة والقيم'],['الإنسان والثقافة','الطبيعة والثقافة','اللغة والتواصل','المجتمع','التقنية','العمل']],
+    hist:[['التحولات الاقتصادية بأوروبا','النهضة الأوروبية','الكشوف الجغرافية','التحولات الفكرية','تطور الدولة','قراءة الوثائق'],['الثورات السياسية','التحولات الاجتماعية','العلاقات الدولية','تاريخ المغرب الحديث','الإصلاحات','التحليل التاريخي']],
+    geo:[['المجال الجغرافي','الخرائط','الوسط الطبيعي','السكان','التنمية','الموارد الطبيعية'],['التنمية المستدامة','التوسع الحضري','الأنشطة الاقتصادية','المخاطر الطبيعية','التفاوتات المجالية','دراسة المجال']]
+  },
+  11: {
+    ar:[['النص الشعري','النص النثري','الخطاب الحجاجي','الصور البيانية','الأساليب الإنشائية','تحليل نص أدبي'],['النقد الأدبي','المقالة الأدبية','الاتساق والانسجام','الحقول الدلالية','الإنشاء الأدبي','المقارنة بين النصوص']],
+    fr:[['La Boîte à merveilles','Le roman autobiographique','Les figures de style','Le schéma narratif','Les registres littéraires','La production écrite'],['Antigone','La tragédie moderne','Le Dernier Jour d’un Condamné','Le discours argumentatif','Les valeurs des temps','La dissertation']],
+    en:[['Education','Culture and traditions','Present perfect','Past perfect','Reported speech','Writing a formal letter'],['Environment','Technology','Conditional sentences','Passive voice','Expressing agreement','Writing an essay']],
+    math:[['المنطق والمجموعات','عموميات حول الدوال','المتتاليات العددية','النهايات','الاشتقاق','دراسة الدوال'],['حساب المثلثات','الجداء السلمي','الدوران','الاحتمالات','الإحصاء','الهندسة الفضائية']],
+    ie:[['سورة يوسف','الإيمان والغيب','الاقتداء بالرسول','فقه الأسرة','العدل','الوفاء بالعهد'],['الصبر واليقين','العفة والحياء','التواصل والحوار','التضامن','الحقوق الأسرية','التوازن والاعتدال']],
+    svt:[['التواصل الهرموني','التواصل العصبي','الجيولوجيا الخارجية','الصخور الرسوبية','الخرائط الجيولوجية','الدينامية الداخلية'],['الوراثة','التعبير المورثي','الانقسام الخلوي','الطفرات','الاستجابة المناعية','الصحة']],
+    pc:[['الحركة والديناميكا','الطاقة الميكانيكية','الشغل والقدرة','الطاقة الكهربائية','التحولات الكيميائية','التفاعلات الحمضية القاعدية'],['المجال المغناطيسي','الكهرباء','الطاقة الحرارية','التوازن الكيميائي','الكيمياء العضوية','القياسات']],
+    philo:[['الوعي واللاوعي','الرغبة','المجتمع','اللغة','الإدراك الحسي','الخيال'],['الغير','التاريخ','الحقيقة','النظرية والتجربة','العلوم الإنسانية','القيم']],
+    info:[['المعطيات والمعلومات','أنظمة المعلومات','الخوارزميات','أساسيات البرمجة','الجداول الإلكترونية','الشبكات'],['قواعد البيانات','معالجة المعطيات','أمن الشبكات','تطبيقات الويب','المشاريع الرقمية','أخلاقيات التقنية']]
+  },
+  12: {
+    ar:[['الخطاب الأدبي','الخطاب النقدي','الشعر الحديث','النص السردي','البلاغة','منهجية تحليل نص'],['القصة القصيرة','المسرح','الخطاب الإعلامي','الخطاب الإشهاري','المقارنة الأدبية','التعبير والإنشاء']],
+    fr:[['Le texte argumentatif','Les connecteurs logiques','La voix passive','Le discours rapporté','Les figures de style','La production écrite'],['Le texte explicatif','Les modalités','Les temps verbaux','La synthèse','La dissertation','Révision générale']],
+    en:[['Youth and values','Education','Cultural issues','Phrasal verbs','Conditionals','Formal writing'],['Sustainable development','Science and technology','Reported speech','Passive voice','Argumentative essay','Exam preparation']],
+    math:[['النهايات والاستمرارية','الاشتقاق','دراسة الدوال','المتتاليات العددية','الدوال اللوغاريتمية','الدوال الأسية'],['الدوال الأصلية','التكامل','المعادلات التفاضلية','الأعداد العقدية','الاحتمالات','الهندسة الفضائية']],
+    ie:[['سورة يس','الإيمان والعلم','التوكل','السيرة النبوية','فقه الأسرة','القيم الإنسانية'],['الحرية والمسؤولية','الاجتهاد','العدل','الحقوق والواجبات','التسامح','مراجعة شاملة']],
+    svt:[['استهلاك المادة العضوية','التنفس الخلوي','التخمر','التقلص العضلي','انتقال الخبر الوراثي','التعبير المورثي'],['الوراثة البشرية','الوراثة السكانية','علم المناعة','التكتونية العامة','التحولات الجيولوجية','التوازن البيئي']],
+    pc:[['الموجات الميكانيكية','الموجات الضوئية','التحولات النووية','ثنائي القطب RC','ثنائي القطب RL','التذبذبات الكهربائية'],['الميكانيك','قوانين نيوتن','التفاعلات الكيميائية','التحولات التلقائية','التحولات القسرية','المعايرة']],
+    philo:[['الشخص والهوية','الشخص بوصفه قيمة','الشخص بين الضرورة والحرية','الغير','التاريخ','الحقيقة'],['النظرية والتجربة','العلمية في العلوم الإنسانية','الدولة','العنف','الحق والعدالة','الواجب والحرية']],
+    info:[['الخوارزميات','بنيات المعطيات','البرمجة','الشبكات','قواعد البيانات','الأمن المعلوماتي'],['تطوير التطبيقات','التصميم الرقمي','تحليل البيانات','الذكاء الاصطناعي','الأخلاقيات الرقمية','مشروع معلوماتي']]
+  }
+};
+const HIGH_SCHOOL_SOURCES={10:'https://www.alloschool.com/category/common-core',11:'https://www.alloschool.com/category/1st-degree',12:'https://www.alloschool.com/category/2nd-degree'};
+const _priorHighTopics=currentTopics;
+currentTopics=function(){if(level>=10&&level<=12&&HIGH_SCHOOL_INDEX[level]?.[subject])return HIGH_SCHOOL_INDEX[level][subject][semester-1];return _priorHighTopics()};
+const _priorHighPane=renderPane;
+renderPane=function(kind){const pane=_priorHighPane(kind);if(level>=10&&level<=12){const a=el('a','📚 تصفح دروس هذا المستوى في AlloSchool ↗');a.href=HIGH_SCHOOL_SOURCES[level];a.target='_blank';a.rel='noopener noreferrer';pane.append(el('hr'));pane.append(a);pane.append(el('p','تنبيه: تختلف المقررات حسب الشعبة والمسلك؛ العناوين المعروضة هنا قوائم مراجعة تحتاج إلى مطابقة مع برنامج شعبتك. الشروحات داخل الموقع أصلية وليست منسوخة من AlloSchool.','muted'));}return pane};
+
+$('langBtn').onclick=()=>{lang=lang==='ar'?'fr':lang==='fr'?'en':'ar';localStorage.setItem('edu-lang',lang);render()};$('themeBtn').onclick=()=>{document.documentElement.classList.toggle('light');localStorage.setItem('edu-theme',document.documentElement.classList.contains('light')?'light':'dark')};if(localStorage.getItem('edu-theme')==='light')document.documentElement.classList.add('light');$('year').textContent=new Date().getFullYear();render();
+</script></body></html>
